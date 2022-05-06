@@ -8,7 +8,7 @@ rho = 1.225
 FOM = 0.75
 
 V_climb = 5
-v_h = 1
+v_h = 30
 
 #rotors data
 #concept 1
