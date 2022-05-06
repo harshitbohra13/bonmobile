@@ -1,3 +1,4 @@
+from re import A
 import numpy as np
 #data
 
@@ -5,6 +6,9 @@ mass = 700 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
+
+V_climb = 5
+v_h = 1
 
 #rotors data
 #concept 1
@@ -28,7 +32,7 @@ i= 0
 for i in range(0,5):
     
     #HOVER POWER
-    T = mass*g
+    T = mass*g #thrust
     P_hover = FOM * np.sqrt(T**3/(rho*Area)) #[W]
     # print(P_hover, "W")
     print()
@@ -36,7 +40,9 @@ for i in range(0,5):
     print()
 
     #CLIMB POWER
-    P_climb = P_hover
+    # P_climb = P_hover
+    P_climb = P_hover*(V_climb/(2*v_h) + np.sqrt((V_climb/(2*v_h))**2+1))
+    P_descend =  P_hover*(V_climb/(2*v_h) - np.sqrt((V_climb/(2*v_h))**2-1))
 
     #mass of a motor
     m_motor = (0.188*P_climb/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
