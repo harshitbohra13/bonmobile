@@ -55,8 +55,8 @@ for i in range(0,5):
     #mass 0f a propeller
     m_prop = 1.1 *(rotor_d*(P_climb/1000/rotors_number)*np.sqrt(blades_number))**0.52
 
-    # print( "rotor mass", m_motor)
-    # print( "propeller mass", m_prop)
+    print( "rotor mass", m_motor)
+    print( "propeller mass", m_prop)
 
     #list of iterartions for different mass of rotors and propellers
     lst_new_motor = lst_new_motor + [m_motor]
