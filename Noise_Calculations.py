@@ -136,14 +136,14 @@ SPL_vortex_list_rho1 = []
 SPL_vortex_list_rho2 = []
 for i in range(len(sens_disk_loading_list)):
     SPL_vortex_list_rho1.append(vortex_noise(4, 0.1, 0.5, rho_cr, h_cr, 4, 300, 0.8, sens_disk_loading_list[i]))
-    SPL_vortex_list_rho2.append(vortex_noise(4, 0.1, 0.5, rho_sea, d_to_build, 4, 300, 0.8, sens_disk_loading_list[i]))
+    SPL_vortex_list_rho2.append(vortex_noise(4, 0.1, 0.5, rho_sea, h_cr/2, 4, 300, 0.8, sens_disk_loading_list[i]))
 
 plt.figure(1)
 plt.title("Noise sensitivity to disk-loading")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho1, label="cruise altitude")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho2, label="sea-level")
 # plt.yscale("log")
-plt.ylim([30, 50])
+plt.ylim([30, 60])
 plt.grid()
 plt.legend()
 
@@ -171,6 +171,20 @@ for i in range(len(sens_Cl_list)):
 plt.figure(3)
 plt.title("Noise sensitivity to mean blade lift coefficient")
 plt.plot(sens_Cl_list, SPL_vortex_list_Cl)
+# plt.yscale("log")
+plt.ylim([30, 50])
+plt.grid()
+plt.show()
+
+sens_N_list = np.arange(1, 15, 1)
+
+SPL_vortex_list_N = []
+for i in range(len(sens_N_list)):
+    SPL_vortex_list_N.append(vortex_noise(4, 0.1, 0.5, rho_cr, h_cr, sens_N_list[i], 1200/sens_N_list[i], 0.8, 200))
+
+plt.figure(4)
+plt.title("Noise sensitivity to amount of rotors")
+plt.plot(sens_N_list, SPL_vortex_list_N)
 # plt.yscale("log")
 plt.ylim([30, 50])
 plt.grid()
