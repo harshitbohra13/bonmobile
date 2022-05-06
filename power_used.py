@@ -7,7 +7,7 @@ g = 9.8
 rho = 1.225
 FOM = 0.75
 
-V_climb = 5
+V_climb = 10
 
 #rotors data
 #concept 1
@@ -30,18 +30,19 @@ lst_new_prop = []
 i= 0
 for i in range(0,5):
     
-    #----HOVER POWER------
-    T = mass*g #thrust
-    P_hover = FOM * np.sqrt(T**3/(rho*one_rotor_area)) #[W]
+    #----HOVER POWER per 1 rotor------
+    total_T = mass*g # total thrust
+    P_hover = FOM * np.sqrt((total_T/rotors_number)**3/(rho*one_rotor_area)) #[W]
     # print(P_hover, "W")
     # print()
     # print(P_hover/1000, "kW")
     # print()
 
-    #------CLIMB/DESCEND POWER----
+    #------CLIMB/DESCEND POWER per 1 rotor----
     # P_climb = P_hover
-    v_i = np.sqrt(T/(2*rho*one_rotor_area/4))
-    v_h = np.sqrt((V_climb+v_i)*v_i)
+    # v_i = np.sqrt(T/(2*rho*one_rotor_area/4))
+    # v_h = np.sqrt((V_climb+v_i)*v_i)
+    v_h = np.sqrt((total_T/rotors_number)/(2*rho*one_rotor_area))    
     print("v_h", v_h)
 
     P_climb = P_hover*(V_climb/(2*v_h) + np.sqrt((V_climb/(2*v_h))**2+1))
