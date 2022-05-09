@@ -27,7 +27,7 @@ blades_number = 3
 rotors_number = 12
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1
+structure_penalty = 1 #structure penalty for additional mass with regards to concept 1,
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.065
