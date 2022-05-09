@@ -24,10 +24,10 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 8
+rotors_number = 12
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.2 #structure penalty for additional mass with regards to concept 1
+structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.065
@@ -116,6 +116,8 @@ print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
 Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
-print("Concept 3 Total Energy per mission:",Total_Energy/1000, "KJ" )
+print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
+#check again:
+#penalty factor 10 struts, 20 engines
 

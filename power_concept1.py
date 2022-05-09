@@ -2,7 +2,7 @@ print("hello world")
 import numpy as np
 #data
 
-mass = 600 #[kg] #aircraft mass
+mass = 500 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
@@ -24,9 +24,10 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 8
-disk_loading= 65 # [N/m^2]
+rotors_number = 4
+disk_loading= 500 # [N/m^2]
 #circular beam
+structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.065
@@ -68,32 +69,34 @@ for i in range(0,5):
     #v_h=np.sqrt(V_climb*np.sqrt((total_T/rotors_number))+((total_T/rotors_number)/(2*rho*one_rotor_area)))
     # print("v_h", v_h)
 
-    P_climb= (total_T/rotors_number)*V_climb+P_hover #per 1 rotor
+    P_climb= P_hover #per 1 rotor
     P_descend =  P_hover #per 1 rotor
 
     #------CRUISE POWER------
     D=0.5*rho* (V_cruise)**2 * S * CD0
     P_cruise=P_hover+(D*V_cruise/rotors_number)
 
-    print("P_hover", P_hover/1000, "kW")
-    print("P_climb", P_climb/1000, "kW")
-    print("P_descend", P_descend/1000, "kW")
-    print("P_cruise", P_cruise/1000, "kW")
+    print("------------")
+    print("P_hover per 1 rotor", P_hover/1000, "kW")
+    print("P_climb per 1 rotor", P_climb/1000, "kW")
+    print("P_descend per 1 rotor", P_descend/1000, "kW")
+    print("P_cruise per 1 rotor", P_cruise/1000, "kW")
+    print("------------")
 
 
 
     #mass of a motor
-    m_motor = (0.188*P_climb/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
+    m_motor = (0.188*rotors_number*P_climb/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
     #mass 0f a propeller
-    m_prop = 1.1 *(rotor_d*(P_climb/1000/rotors_number)*np.sqrt(blades_number))**0.52
+    m_prop = 1.1 *(rotor_d*(P_climb*rotors_number/1000/rotors_number)*np.sqrt(blades_number))**0.52
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
     m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",m_motor_structure)
-    # print( "rotor mass", m_motor)
-    # print( "propeller mass", m_prop)
+    print( "rotor mass", m_motor)
+    print( "propeller mass", m_prop)
     print("battery mass", m_battery)
 
     #list of iterartions for different mass of rotors and propellers
@@ -103,11 +106,16 @@ for i in range(0,5):
     lst_m_battery = lst_m_battery + [m_battery]
     #update aircraft i ==0 and then i> exchange the rotors and propellors
     if i ==0:
-        mass = mass + rotors_number*(m_motor+m_prop+m_motor_structure)+m_battery
+        mass = mass + rotors_number*(m_motor+m_prop)+m_battery + 4*structure_penalty * m_motor_structure
     else:
-        mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i]+lst_m_motor_structure[i]) - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1]+lst_m_motor_structure[i-1]) + lst_m_battery[i]-lst_m_battery[i-1]
+        mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     i=i+1
+propeller_radius = np.sqrt(one_rotor_area/np.pi)
+print("propeller radius: ", propeller_radius,"m")
 
+#TOTAL ENERGY:
+Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
+print("Concept 1 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
 
