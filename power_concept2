@@ -17,11 +17,11 @@ mass = 500
 # taper_ratio = 0.3
 # mass_WING = (0.0051*(1200*n_ult)**0.557*Sw**0.649*AR**0.5*t_c**(-0.4)*(1+taper_ratio)**0.1*np.cos(np.radians(20))**(-1)*1)#[kg] #aircraft mass
 # print("!!!!!!!!!!!!!!",mass_WING)
-W_to = 1300 * 9.8
+W_to = 1400 * 9.8
 W_D = W_to
 n_ult=3.75
-b = 10
-S = 15
+b = 8
+S = 10
 t_c = 0.12
 taper_ratio = 0.7
 f_lambda = (1+ 2* taper_ratio)/(1+taper_ratio)
