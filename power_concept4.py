@@ -25,9 +25,10 @@ battery_density = 250 #Wh/kg
 #rotors data
 blades_number = 3
 rotors_number = 8
+vertical_rotors = 2
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.8 #structure penalty for additional mass with regards to concept 1
+structure_penalty = 1 #structure penalty for additional mass with regards to concept 1, penalty one becaus ethe length increases
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.065
@@ -41,8 +42,10 @@ structure_density = 2700 #[kg/m**3]
 
 
 #list definition
-lst_new_motor = []
-lst_new_prop = []
+lst_new_motor_horizontal = []
+lst_new_motor_vertical = []
+lst_new_prop_horizontal = []
+lst_new_prop_vertical = []
 lst_m_motor_structure = []
 lst_m_battery = []
 
@@ -56,6 +59,8 @@ for i in range(0,5):
     one_rotor_area=Total_A/rotors_number
     rotor_d= np.sqrt(4*one_rotor_area/np.pi)
 
+
+
     P_hover = FOM * np.sqrt((total_T/rotors_number)**3/(rho*one_rotor_area)) #[W]
     # print(P_hover, "W")
     # print()
@@ -65,7 +70,7 @@ for i in range(0,5):
 
     #------CLIMB/DESCEND POWER per 1 rotor----
     
-    v_i = np.sqrt((total_T/rotors_number)/(2*rho*one_rotor_area))    #???????????????????????????????????
+    # v_i = np.sqrt((total_T/rotors_number)/(2*rho*one_rotor_area))    #???????????????????????????????????
     #v_h=np.sqrt(V_climb*np.sqrt((total_T/rotors_number))+((total_T/rotors_number)/(2*rho*one_rotor_area)))
     # print("v_h", v_h)
 
@@ -74,46 +79,59 @@ for i in range(0,5):
 
     #------CRUISE POWER------
     D=0.5*rho* (V_cruise)**2 * S * CD0
-    P_cruise=P_hover+(D*V_cruise/rotors_number)
+    P_cruise_horizontal = P_hover
+    P_cruise_vertical =D*V_cruise/vertical_rotors #per 1 of 2 vertical engines
+    #vertical cruise power
+    Total_A_horizontal=D/disk_loading
+    one_rotor_area_horizontal=Total_A/vertical_rotors
+    rotor_d_horizontal= np.sqrt(4*one_rotor_area_horizontal/np.pi)
 
     print("------------")
     print("P_hover per 1 rotor", P_hover/1000, "kW")
     print("P_climb per 1 rotor", P_climb/1000, "kW")
     print("P_descend per 1 rotor", P_descend/1000, "kW")
-    print("P_cruise per 1 rotor", P_cruise/1000, "kW")
+    print("P_cruise_horizontal per 1 rotor", P_cruise_horizontal/1000, "kW")
+    print("P_cruise vertical per 1 rotor", P_cruise_vertical/1000, "kW")
     print("------------")
 
-
+    #   VERTICAL DIMAETER!!!!!!
 
     #mass of a motor
-    m_motor = (0.188*rotors_number*P_climb/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
+    m_motor_horizontal = (0.188*rotors_number*P_cruise_horizontal/1000 +5.836)/rotors_number
+    m_motor_vertical = (0.188*vertical_rotors*P_cruise_vertical/1000 +5.836)/vertical_rotors #power in the equation must be given in kW thus P_climb/1000 (article figure)
     #mass 0f a propeller
-    m_prop = 1.1 *(rotor_d*(P_climb*rotors_number/1000/rotors_number)*np.sqrt(blades_number))**0.52
+    m_prop_horizontal = 1.1 *(rotor_d*(P_cruise_horizontal*rotors_number/1000/rotors_number)*np.sqrt(blades_number))**0.52
+    m_prop_vertical = 1.1 *(rotor_d_horizontal*(P_cruise_vertical*vertical_rotors/1000/vertical_rotors)*np.sqrt(blades_number))**0.52
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
-    m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
+    m_battery = 2*(rotors_number*P_hover*t_hover + rotors_number* P_climb*t_climb + (rotors_number*P_cruise_horizontal+vertical_rotors*P_cruise_vertical)*t_cruise + rotors_number*P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",m_motor_structure)
-    print( "rotor mass", m_motor)
-    print( "propeller mass", m_prop)
+    print( "rotor mass horizontal", m_motor_horizontal)
+    print( "rotor mass vertical", m_motor_vertical)
+    print( "propeller mass horizontal", m_prop_horizontal)
+    print( "propeller mass vertical", m_prop_vertical)
     print("battery mass", m_battery)
 
     #list of iterartions for different mass of rotors and propellers
-    lst_new_motor = lst_new_motor + [m_motor]
-    lst_new_prop = lst_new_prop+ [m_prop]
+    lst_new_motor_horizontal = lst_new_motor_horizontal + [m_motor_horizontal]
+    lst_new_motor_vertical = lst_new_motor_vertical + [m_motor_vertical]
+    lst_new_prop_horizontal = lst_new_prop_horizontal+ [m_prop_horizontal]
+    lst_new_prop_vertical = lst_new_prop_vertical+ [m_prop_vertical]
     lst_m_motor_structure = lst_m_motor_structure + [m_motor_structure]
     lst_m_battery = lst_m_battery + [m_battery]
     #update aircraft i ==0 and then i> exchange the rotors and propellors
     if i ==0:
-        mass = mass + rotors_number*(m_motor+m_prop)+m_battery + 4*structure_penalty * m_motor_structure
+        mass = mass + rotors_number*(m_motor_horizontal+m_prop_horizontal) + vertical_rotors*(m_motor_horizontal+m_prop_horizontal) +m_battery + 4*structure_penalty * m_motor_structure
     else:
-        mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
+        mass = mass + rotors_number*(lst_new_prop_horizontal[i] + lst_new_motor_horizontal[i])+ vertical_rotors*(lst_new_prop_vertical[i] + lst_new_motor_vertical[i])+4*structure_penalty *lst_m_motor_structure[i] 
+        - rotors_number*(lst_new_prop_horizontal[i-1] + lst_new_motor_horizontal[i-1]) - vertical_rotors*(lst_new_prop_vertical[i-1] + lst_new_motor_vertical[i-1]) - 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
-Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
+Total_Energy = 2*(rotors_number*P_hover*t_hover + rotors_number* P_climb*t_climb + (rotors_number*P_cruise_horizontal+vertical_rotors*P_cruise_vertical)*t_cruise + rotors_number*P_descend * t_descend)
 print("Concept 4 Total Energy per mission:",Total_Energy/1000, "KJ" )
