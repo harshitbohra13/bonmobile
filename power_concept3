@@ -2,7 +2,7 @@ print("hello world")
 import numpy as np
 #data
 
-mass = 700 #[kg] #aircraft mass
+mass = 600 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
