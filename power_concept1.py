@@ -24,7 +24,7 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 4
+rotors_number = 8
 disk_loading= 65 # [N/m^2]
 #circular beam
 structure_length = 2
@@ -73,7 +73,7 @@ for i in range(0,5):
 
     #------CRUISE POWER------
     D=0.5*rho* (V_cruise)**2 * S * CD0
-    P_cruise=P_hover+D*V_cruise
+    P_cruise=P_hover+(D*V_cruise/rotors_number)
 
     print("P_hover", P_hover/1000, "kW")
     print("P_climb", P_climb/1000, "kW")
