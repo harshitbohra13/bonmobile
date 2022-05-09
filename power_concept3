@@ -89,7 +89,7 @@ for i in range(0,5):
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
-    m_battery = 4*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
+    m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",m_motor_structure)
     # print( "rotor mass", m_motor)
