@@ -73,7 +73,7 @@ for i in range(0,5):
     P_descend =  P_hover #per 1 rotor
 
     #------CRUISE POWER------
-    D=0.5*rho* (V_cruise)**2 * S * CD0
+    D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)
     P_cruise=P_hover+(D*V_cruise/rotors_number)
 
     print("------------")

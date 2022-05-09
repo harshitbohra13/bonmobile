@@ -6,11 +6,12 @@ alpha=5
 C_D=0.008
 C_L=0.5
 
-S_airfoil=5
+S_airfoil=10
 n_ult=3
 AR=8.3
 
-mass = 500+ 0.04674*(500**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft mass
+mass = 500+ 0.04674*(1000**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft mass
+print(mass-500)
 g = 9.8 
 rho = 1.225
 FOM = 0.75
