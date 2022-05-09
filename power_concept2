@@ -7,16 +7,41 @@ C_D=0.008
 C_L=0.5
 
 S_airfoil=10
-n_ult=3
+n_ult=3.75
 AR=8.3
 
-mass = 500+ 0.04674*(1000**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft mass
-print(mass-500)
+# mass = 500+ 0.04674*(1000**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft 
+mass = 500
+# Sw = 20
+# t_c = 0.15
+# taper_ratio = 0.3
+# mass_WING = (0.0051*(1200*n_ult)**0.557*Sw**0.649*AR**0.5*t_c**(-0.4)*(1+taper_ratio)**0.1*np.cos(np.radians(20))**(-1)*1)#[kg] #aircraft mass
+# print("!!!!!!!!!!!!!!",mass_WING)
+W_to = 1300 * 9.8
+W_D = W_to
+n_ult=3.75
+b = 10
+S = 15
+t_c = 0.12
+taper_ratio = 0.7
+f_lambda = (1+ 2* taper_ratio)/(1+taper_ratio)
+sweep = 0
+specific_material_weight = 2700*9.8 #N/m^3
+t_ss = 0.004 * (1 + np.sqrt(W_to/(10**6)))
+w_sigma = 40 * (1+1.1*(W_to/(10**6))**(-1/4))*10**(-6)
+Weight_WING = 0.06 * w_sigma * n_ult * W_D * b**3 / S * f_lambda / (t_c * np.cos(np.radians(sweep))**2) + specific_material_weight*t_ss*S
+
 g = 9.8 
+mass = mass+ Weight_WING/g #[kg] #aircraft mass
+# print(mass-500)
+print("WIIIIIIING:", Weight_WING/g)
+
 rho = 1.225
 FOM = 0.75
 CD0=0.3
 S=7
+# Weight_WING = 100
+# mass = mass+ Weight_WING 
 
 
 V_descend=7 #m/s
