@@ -2,7 +2,7 @@ print("hello world")
 import numpy as np
 #data
 
-mass = 700 #[kg] #aircraft mass
+mass = 600 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
@@ -23,7 +23,6 @@ battery_density = 250 #Wh/kg
 
 #---concept 1---
 #rotors data
-rotor_d = 1.5 #[m]
 blades_number = 3
 rotors_number = 4
 disk_loading= 65 # [N/m^2]
@@ -54,6 +53,7 @@ for i in range(0,5):
     total_T = mass*g # total thrust
     Total_A=total_T/disk_loading
     one_rotor_area=Total_A/rotors_number
+    rotor_d= np.sqrt(4*one_rotor_area/np.pi)
 
     P_hover = FOM * np.sqrt((total_T/rotors_number)**3/(rho*one_rotor_area)) #[W]
     # print(P_hover, "W")
