@@ -6,7 +6,7 @@ alpha=5
 C_D=0.008
 C_L=0.5
 
-S_airfoil=20
+S_airfoil=5
 n_ult=3
 AR=8.3
 
@@ -99,7 +99,7 @@ for i in range(0,5):
 
     # horizontal propellor calc
     horprop_area=Total_drag/disk_loading
-    horprop_d= np.sqrt(4*one_rotor_area/np.pi)
+    horprop_d= np.sqrt(4*horprop_area/np.pi)
     m_horiprop=1.1 *(horprop_d*((Total_drag*V_cruise)/1000)*np.sqrt(blades_number))**0.52
     m_horimotor = (0.188*(Total_drag*V_cruise)/1000 +5.836)
 
@@ -110,11 +110,13 @@ for i in range(0,5):
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
-    m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
+    m_battery = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",m_motor_structure)
     print( "rotor mass", m_motor)
     print( "propeller mass", m_prop)
+    print( "hor_rotor mass", m_horimotor)
+    print( "hor propeller mass", m_horiprop)
     print("battery mass", m_battery)
 
     #list of iterartions for different mass of rotors and propellers
@@ -126,15 +128,15 @@ for i in range(0,5):
     lst_new_horiprop = lst_new_horiprop + [m_horiprop]
     #update aircraft i ==0 and then i> exchange the rotors and propellors
     if i ==0:
-        mass = mass + rotors_number*(m_motor+m_prop)+m_battery + 4*structure_penalty * m_motor_structure
+        mass = mass + rotors_number*(m_motor+m_prop)+m_battery + 4*structure_penalty * m_motor_structure + (m_horiprop+m_horimotor)
     else:
-        mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
+        mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] + (lst_new_horimotor[i]+lst_new_horiprop[i]) - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] - (lst_new_horimotor[i-1]+lst_new_horiprop[i-1]) + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
-Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
+Total_Energy = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
 print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
