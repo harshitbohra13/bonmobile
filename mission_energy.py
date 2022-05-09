@@ -1,4 +1,4 @@
-from power_used import P_hover, P_climb
+from power_concept1 import P_hover, P_climb
 #times
 
 t_hover =
