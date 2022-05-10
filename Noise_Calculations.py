@@ -2,11 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
+g = 9.80665         # gravitational acceleration
 K2 = 0.425895581    # a derived constant [s^3/m^3]
 rho_sea = 1.225     # air density at sea-level [kg/m^3]
 rho_cr = 1.17315    # air density at cruise altitude [kg/m^3]
 h_cr = 450          # cruise altitude [m]
-d_to_build = 4.6    # Closest distance to a building the vehicle is allowed to get [m]
+d_to_build = 4.6    # closest distance to a building the vehicle is allowed to get [m]
 
 # Functions for the noise calculations
 def rotor_solidity(B: int, c: float, R: float):
@@ -111,16 +112,19 @@ def vortex_noise(B: int, c: float, R: float, rho: float, Delta_S: float, N: int,
     return SPL_vortex
 
 # Providing arrays with values for each concept
-Weight = np.array([1200,1200,1200,1200,1200])
-B = np.array([4, 4, 4, 4, 4])
+mass = np.array([1452.483, 1599.3759, 1520.29, 1623.78, 1550.758])
+Weight = mass * g
+B = np.array([3, 3, 3, 3, 3])
 c = np.array([0.1, 0.1, 0.1, 0.1, 0.1])
-R = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
-N = np.array([4, 4, 8, 10, 12])
+N = np.array([4, 4, 8, 8, 12])
 Thrust_engine = Weight/N
 Cl = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
-disk_loading = []
-for i in range(len(R)):
-    disk_loading.append(Thrust_engine[i] / (np.pi * R[i] ** 2))
+disk_loading = np.array([500, 500, 500, 500, 500])
+A = []
+R = []
+for i in range(len(disk_loading)):
+    A.append(Thrust_engine[i]/disk_loading[i])
+    R.append(np.sqrt(A[i]/np.pi))
 
 SPL_vortex = []
 s = []
@@ -142,7 +146,6 @@ plt.figure(1)
 plt.title("Noise sensitivity to disk-loading")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho1, label="cruise altitude")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho2, label="sea-level")
-# plt.yscale("log")
 plt.ylim([30, 60])
 plt.grid()
 plt.legend()
@@ -196,5 +199,3 @@ print("Noise vehicle 2 = " + str(round(SPL_vortex[1], 2)) + " dB")
 print("Noise vehicle 3 = " + str(round(SPL_vortex[2], 2)) + " dB")
 print("Noise vehicle 4 = " + str(round(SPL_vortex[3], 2)) + " dB")
 print("Noise vehicle 5 = " + str(round(SPL_vortex[4], 2)) + " dB")
-
-#
