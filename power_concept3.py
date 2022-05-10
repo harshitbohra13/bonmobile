@@ -89,9 +89,9 @@ for i in range(0,5):
 
 
     #mass of a motor
-    m_motor = (0.188*rotors_number*P_climb/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
+    m_motor = (0.188*rotors_number*P_cruise/1000 +5.836)/rotors_number #power in the equation must be given in kW thus P_climb/1000 (article figure)
     #mass 0f a propeller
-    m_prop = 1.1 *(rotor_d*(P_climb*rotors_number/1000/rotors_number)*np.sqrt(blades_number))**0.52
+    m_prop = 1.1 *(rotor_d*(P_cruise*rotors_number/1000/rotors_number)*np.sqrt(blades_number))**0.52
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
