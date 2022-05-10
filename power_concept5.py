@@ -121,3 +121,4 @@ print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
 #check again:
 #penalty factor 10 struts, 20 engines
 
+#

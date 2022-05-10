@@ -12,3 +12,5 @@ I = np.pi/4 * (r_outer**4-r_inner**4)#[moment of inertia]
 max_stress = r_outer* M/(I)
 
 print("max stress", max_stress/(10**6), "MPa")
+
+#

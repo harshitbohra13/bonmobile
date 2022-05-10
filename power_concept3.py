@@ -119,3 +119,4 @@ Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_
 print("Concept 3 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
 
+#

@@ -118,4 +118,4 @@ print("propeller radius: ", propeller_radius,"m")
 Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
 print("Concept 1 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
-
+#
