@@ -6,7 +6,7 @@ alpha=5
 C_D=0.008
 C_L=0.5
 
-S_airfoil=10
+S_airfoil=15
 n_ult=3.75
 AR=8.3
 
@@ -17,10 +17,10 @@ mass = 500
 # taper_ratio = 0.3
 # mass_WING = (0.0051*(1200*n_ult)**0.557*Sw**0.649*AR**0.5*t_c**(-0.4)*(1+taper_ratio)**0.1*np.cos(np.radians(20))**(-1)*1)#[kg] #aircraft mass
 # print("!!!!!!!!!!!!!!",mass_WING)
-W_to = 1400 * 9.8
+W_to = 1490 * 9.8
 W_D = W_to
 n_ult=3.75
-S = 10
+S = 15
 b = np.sqrt(AR*S)
 t_c = 0.12
 taper_ratio = 0.7
@@ -62,8 +62,8 @@ blades_number = 3
 rotors_number = 4
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1
-structure_length = 2
+structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
+structure_length = 1
 structure_radius = 0.075
 structure_inner_radius = 0.070
 structure_Area = np.pi*structure_radius**2 - np.pi*structure_inner_radius**2

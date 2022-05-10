@@ -30,7 +30,7 @@ tilt_rotors = 2
 disk_loading= 500 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1, penalty one becaus ethe length increases
-structure_length = 4
+structure_length = 4D
 structure_radius = 0.075
 structure_inner_radius = 0.070
 structure_Area = np.pi*structure_radius**2 - np.pi*structure_inner_radius**2
@@ -129,8 +129,7 @@ for i in range(0,5):
     if i ==0:
         mass = mass + rotors_number*(m_motor_horizontal+m_prop_horizontal) + tilt_rotors*(m_motor_horizontal+m_prop_horizontal) +m_battery + 4*structure_penalty * m_motor_structure
     else:
-        mass = mass + rotors_number*(lst_new_prop_horizontal[i] + lst_new_motor_horizontal[i])+ tilt_rotors*(lst_new_prop_vertical[i] + lst_new_motor_vertical[i])+4*structure_penalty *lst_m_motor_structure[i] 
-        - rotors_number*(lst_new_prop_horizontal[i-1] + lst_new_motor_horizontal[i-1]) - tilt_rotors*(lst_new_prop_vertical[i-1] + lst_new_motor_vertical[i-1]) - 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
+        mass = mass + rotors_number*(lst_new_prop_horizontal[i] + lst_new_motor_horizontal[i])+ tilt_rotors*(lst_new_prop_vertical[i] + lst_new_motor_vertical[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop_horizontal[i-1] + lst_new_motor_horizontal[i-1]) - tilt_rotors*(lst_new_prop_vertical[i-1] + lst_new_motor_vertical[i-1]) - 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
