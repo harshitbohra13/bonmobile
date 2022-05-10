@@ -1,5 +1,6 @@
 print("hello world")
 import numpy as np
+import drag_calc as drag
 
 #airfoil charachteristics
 alpha=5
@@ -159,6 +160,9 @@ for i in range(0,5):
     else:
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] + (lst_new_horimotor[i]+lst_new_horiprop[i]) - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] - (lst_new_horimotor[i-1]+lst_new_horiprop[i-1]) + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
+    
+    propeller_radius = np.sqrt(one_rotor_area/np.pi)
+    CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
