@@ -36,7 +36,7 @@ def rotor_drag(T, r, n):
 
 
 def rotor_drag90(T, r):
-    Cdrotor = 0.1
+    Cdrotor = 0.05 #flat structural drag
     Cd0_rotor = Cd0_blade*3 + Cdrotor
     return(Cd0_rotor)
 
