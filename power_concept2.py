@@ -6,6 +6,7 @@ alpha=5
 C_D=0.008
 C_L=0.5
 
+
 S_airfoil=15
 n_ult=3.75
 AR=8.3
