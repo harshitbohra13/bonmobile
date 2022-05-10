@@ -22,7 +22,7 @@ mass = 500
 W_to = 1490 * 9.8
 W_D = W_to
 n_ult=3.75
-S = 6
+S = 15
 b = np.sqrt(AR*S)
 # print("wingspan:",b)
 t_c = 0.12
