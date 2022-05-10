@@ -22,7 +22,7 @@ mass = 500
 W_to = 1490 * 9.8
 W_D = W_to
 n_ult=3.75
-S = 15
+S = 6
 b = np.sqrt(AR*S)
 # print("wingspan:",b)
 t_c = 0.12
@@ -54,7 +54,7 @@ V_cruise=100/3.6 #m/s
 t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
 t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
-t_hover = 60 #s
+t_hover = 60 *2 #[s] hovering appears twice
 
 #BATTERIES
 battery_efficiency = 0.85
@@ -121,13 +121,13 @@ for i in range(0,5):
     D_airfoil=0.5*rho*(V_cruise)**2*S_airfoil*C_D 
     Total_drag=D_airfoil+D
 
-    P_cruise=P_hovercruise+Total_drag*V_cruise
+    P_totalcruise=P_hovercruise+Total_drag*V_cruise
 
     print("------------")
     print("P_hover per 1 rotor", P_hover/1000, "kW")
     print("P_climb per 1 rotor", P_climb/1000, "kW")
     print("P_descend per 1 rotor", P_descend/1000, "kW")
-    print("P_cruise per 1 rotor", P_cruise/1000, "kW")
+    print("P_cruise per 1 rotor", P_hovercruise/1000, "kW")
     print("------------")
 
     # horizontal propellor calc
