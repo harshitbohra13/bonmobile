@@ -30,7 +30,7 @@ tilt_rotors = 2
 disk_loading= 500 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1, penalty one becaus ethe length increases
-structure_length = 4D
+structure_length = 4
 structure_radius = 0.075
 structure_inner_radius = 0.070
 structure_Area = np.pi*structure_radius**2 - np.pi*structure_inner_radius**2
