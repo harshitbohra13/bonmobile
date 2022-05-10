@@ -20,8 +20,8 @@ mass = 500
 W_to = 1400 * 9.8
 W_D = W_to
 n_ult=3.75
-b = 8
 S = 10
+b = np.sqrt(AR*S)
 t_c = 0.12
 taper_ratio = 0.7
 f_lambda = (1+ 2* taper_ratio)/(1+taper_ratio)
@@ -39,7 +39,7 @@ print("WIIIIIIING:", Weight_WING/g)
 rho = 1.225
 FOM = 0.75
 CD0=0.3
-S=7
+S=7 #???????
 # Weight_WING = 100
 # mass = mass+ Weight_WING 
 
