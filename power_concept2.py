@@ -24,6 +24,7 @@ W_D = W_to
 n_ult=3.75
 S = 15
 b = np.sqrt(AR*S)
+# print("wingspan:",b)
 t_c = 0.12
 taper_ratio = 0.7
 f_lambda = (1+ 2* taper_ratio)/(1+taper_ratio)
@@ -50,13 +51,17 @@ V_descend=7 #m/s
 V_climb = 7 #m/s
 V_cruise=100/3.6 #m/s
 
-t_climb=100 #s
-t_descend=100 #s
+t_climb=(450-30.5)/ V_climb #s
+t_descend= t_climb #s
 t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60 #s
 
+#BATTERIES
 battery_efficiency = 0.85
 battery_density = 250 #Wh/kg
+#HYDROGEN
+# battery_efficiency = 0.9
+# battery_density = 33000 #Wh/kg
 
 #---concept 1---
 #rotors data
