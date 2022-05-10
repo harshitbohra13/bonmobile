@@ -13,8 +13,8 @@ V_descend=7 #m/s
 V_climb = 7 #m/s
 V_cruise=100/3.6 #m/s
 
-t_climb=100 #s
-t_descend=100 #s
+t_climb=(450-30.5)/ V_climb #s
+t_descend= t_climb #s
 t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60 #s
 
