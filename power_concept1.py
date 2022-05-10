@@ -1,5 +1,6 @@
 print("hello world")
 import numpy as np
+import drag_calc as drag
 #data
 
 mass = 500 #[kg] #aircraft mass
@@ -72,8 +73,8 @@ for i in range(0,5):
     P_climb= P_hover #per 1 rotor
     P_descend =  P_hover #per 1 rotor
 
-    #------CRUISE POWER------
-    D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)
+    #------CRUISE POWER------##
+    D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)  #1.1 for -5alpha drag
     P_cruise=P_hover+(D*V_cruise/rotors_number)
 
     print("------------")
@@ -110,6 +111,8 @@ for i in range(0,5):
     else:
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
+    propeller_radius = np.sqrt(one_rotor_area/np.pi)
+    CD0 = drag.Cd0_design1(rotors_number, propeller_radius, total_T)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
