@@ -1,6 +1,8 @@
 print("hello world")
 from turtle import tiltangle
 import numpy as np
+import drag_calc as drag
+from power_concept1 import P_cruise
 #data
 
 mass = 500 #[kg] #aircraft mass
@@ -131,6 +133,8 @@ for i in range(0,5):
     else:
         mass = mass + rotors_number*(lst_new_prop_horizontal[i] + lst_new_motor_horizontal[i])+ tilt_rotors*(lst_new_prop_vertical[i] + lst_new_motor_vertical[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop_horizontal[i-1] + lst_new_motor_horizontal[i-1]) - tilt_rotors*(lst_new_prop_vertical[i-1] + lst_new_motor_vertical[i-1]) - 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
+    propeller_radius = np.sqrt(one_rotor_area/np.pi)
+    CD0 = drag.Cd0_design4(rotors_number, propeller_radius, total_T, P_cruise/V_cruise, rotor_d_horizontal/2)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
