@@ -8,7 +8,7 @@ C_D=0.008
 C_L=0.5
 
 
-S_airfoil=15
+S_airfoil=10
 n_ult=3.75
 AR=8.3
 
@@ -22,7 +22,7 @@ mass = 500
 W_to = 1490 * 9.8
 W_D = W_to
 n_ult=3.75
-S = 15
+S = S_airfoil
 b = np.sqrt(AR*S)
 # print("wingspan:",b)
 t_c = 0.12

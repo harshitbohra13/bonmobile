@@ -2,6 +2,7 @@ print("hello world")
 import tarfile
 import numpy as np
 import matplotlib.pyplot as plt
+import drag_calc as drag
 
 
 print("check check check")
@@ -28,7 +29,6 @@ def airfoil_sensitivity(S):
     W_to = 1490 * 9.8
     W_D = W_to
     n_ult=3.75
-    S = 15
     b = np.sqrt(AR*S)
     t_c = 0.12
     taper_ratio = 0.7
@@ -56,13 +56,17 @@ def airfoil_sensitivity(S):
     V_climb = 7 #m/s
     V_cruise=100/3.6 #m/s
 
-    t_climb=100 #s
-    t_descend=100 #s
+    t_climb=(450-30.5)/ V_climb #s
+    t_descend= t_climb #s
     t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
-    t_hover = 60 #s
+    t_hover = 60 *2 #[s] hovering appears twice
 
+    #BATTERIES
     battery_efficiency = 0.85
     battery_density = 250 #Wh/kg
+    #HYDROGEN
+    # battery_efficiency = 0.9
+    # battery_density = 33000 #Wh/kg
 
     #---concept 1---
     #rotors data
@@ -121,14 +125,14 @@ def airfoil_sensitivity(S):
         D=0.5*rho* (V_cruise)**2 * S * CD0
         D_airfoil=0.5*rho*(V_cruise)**2*S_airfoil*C_D 
         Total_drag=D_airfoil+D
-        print("total drag", Total_drag)
-        P_cruise=P_hovercruise+Total_drag*V_cruise
+
+        P_totalcruise=P_hovercruise+Total_drag*V_cruise
 
         print("------------")
         print("P_hover per 1 rotor", P_hover/1000, "kW")
         print("P_climb per 1 rotor", P_climb/1000, "kW")
         print("P_descend per 1 rotor", P_descend/1000, "kW")
-        print("P_cruise per 1 rotor", P_cruise/1000, "kW")
+        print("P_cruise per 1 rotor", P_hovercruise/1000, "kW")
         print("------------")
 
         # horizontal propellor calc
@@ -166,20 +170,23 @@ def airfoil_sensitivity(S):
         else:
             mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] + (lst_new_horimotor[i]+lst_new_horiprop[i]) - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] - (lst_new_horimotor[i-1]+lst_new_horiprop[i-1]) + lst_m_battery[i]-lst_m_battery[i-1]
         print("mass", mass)
+        
+        propeller_radius = np.sqrt(one_rotor_area/np.pi)
+        CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d)
         i=i+1
-    propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    print("propeller radius: ", propeller_radius,"m")
+        propeller_radius = np.sqrt(one_rotor_area/np.pi)
+        print("propeller radius: ", propeller_radius,"m")
 
-    #TOTAL ENERGY:
-    Total_Energy = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
-    print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )
-    print(S,"checkpoint")
-    m_horiengine=m_horiprop+m_horimotor
+        #TOTAL ENERGY:
+        Total_Energy = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
+        print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )    
+        print(S,"checkpoint")
+        m_horiengine=m_horiprop+m_horimotor
     return Total_Energy,m_horiengine
 
 
 Energy_used=[]
-S_lst=np.arange(1,21,1)
+S_lst=np.arange(1,11,1)
 for i in S_lst:
     Energy_used.append(airfoil_sensitivity(i)[0])
     tail_engine.append(airfoil_sensitivity(i)[1])
