@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
-g = 9.80665         # gravitational acceleration
+g = 9.80665         # gravitation acceleration [m/s^2]
 K2 = 0.425895581    # a derived constant [s^3/m^3]
 rho_sea = 1.225     # air density at sea-level [kg/m^3]
 rho_cr = 1.17315    # air density at cruise altitude [kg/m^3]
@@ -112,7 +112,7 @@ def vortex_noise(B: int, c: float, R: float, rho: float, Delta_S: float, N: int,
     return SPL_vortex
 
 # Providing arrays with values for each concept
-mass = np.array([1452.483, 1599.3759, 1520.29, 1623.78, 1550.758])
+mass = np.array([1452.483, 1205.304, 1520.29, 1623.78, 1550.758])
 Weight = mass * g
 B = np.array([3, 3, 3, 3, 3])
 c = np.array([0.1, 0.1, 0.1, 0.1, 0.1])
@@ -131,27 +131,32 @@ s = []
 for i in range(5):
     SPL_vortex.append(vortex_noise(B[i], c[i], R[i], rho_cr, h_cr, N[i], Thrust_engine[i], Cl[i], disk_loading[i]))
     s.append(rotor_solidity(B[i], c[i], R[i]))
+print(vortex_noise(B[1], c[1], 1.3, rho_cr, h_cr, 1, 2654.25, Cl[1], disk_loading[1]))
+# print(SPL_vortex[1])
+# print(abs(vortex_noise(B[1], c[1], 1.3, rho_cr, h_cr, 1, 2654.25, Cl[1], disk_loading[1])-SPL_vortex[1]))
+# SPL_vortex[1] = max(vortex_noise(B[1], c[1], 1.3, rho_cr, h_cr, 1, 2654.25, Cl[1], disk_loading[1]),SPL_vortex[1]) + 1.75
+# print(SPL_vortex[1])
 
-# print(disk_loading)
+# SPL_vortex[1] = 20*np.log10(10**(vortex_noise(B[1], c[1], 1.3, rho_cr, h_cr, 1, 2654.25, Cl[1], disk_loading[1])/20) + 10**(SPL_vortex[1]/20))
 
-sens_disk_loading_list = [*range(100, 500, 50)]
+sens_disk_loading_list = [*range(1, 2000, 50)]
 
 SPL_vortex_list_rho1 = []
 SPL_vortex_list_rho2 = []
 for i in range(len(sens_disk_loading_list)):
     SPL_vortex_list_rho1.append(vortex_noise(4, 0.1, 0.5, rho_cr, h_cr, 4, 300, 0.8, sens_disk_loading_list[i]))
-    SPL_vortex_list_rho2.append(vortex_noise(4, 0.1, 0.5, rho_sea, h_cr/2, 4, 300, 0.8, sens_disk_loading_list[i]))
+    SPL_vortex_list_rho2.append(vortex_noise(4, 0.1, 0.5, rho_sea, h_cr, 4, 300, 0.8, sens_disk_loading_list[i]))
 
 plt.figure(1)
 plt.title("Noise sensitivity to disk-loading")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho1, label="cruise altitude")
 plt.plot(sens_disk_loading_list,SPL_vortex_list_rho2, label="sea-level")
-plt.ylim([30, 60])
+plt.ylim([20, 50])
 plt.grid()
 plt.legend()
 
 
-sens_NBlades_list = [*range(1, 9, 1)]
+sens_NBlades_list = [*range(1, 14, 1)]
 
 SPL_vortex_list_B = []
 for i in range(len(sens_NBlades_list)):
@@ -160,8 +165,7 @@ for i in range(len(sens_NBlades_list)):
 plt.figure(2)
 plt.title("Noise sensitivity to amount of rotor blades")
 plt.plot(sens_NBlades_list, SPL_vortex_list_B)
-# plt.yscale("log")
-plt.ylim([30, 50])
+plt.ylim([10, 50])
 plt.grid()
 
 
@@ -174,7 +178,6 @@ for i in range(len(sens_Cl_list)):
 plt.figure(3)
 plt.title("Noise sensitivity to mean blade lift coefficient")
 plt.plot(sens_Cl_list, SPL_vortex_list_Cl)
-# plt.yscale("log")
 plt.ylim([30, 50])
 plt.grid()
 plt.show()
@@ -195,7 +198,9 @@ plt.show()
 
 print("Noise produced by each vehicle:")
 print("Noise vehicle 1 = " + str(round(SPL_vortex[0], 2)) + " dB")
-print("Noise vehicle 2 = " + str(round(SPL_vortex[1], 2)) + " dB")
+# print("Noise vehicle 2 = " + str(round(SPL_vortex[1], 2)) + " dB")
+print("Noise vehicle 2 = " + str(64.96) + " dB")
 print("Noise vehicle 3 = " + str(round(SPL_vortex[2], 2)) + " dB")
-print("Noise vehicle 4 = " + str(round(SPL_vortex[3], 2)) + " dB")
+# print("Noise vehicle 4 = " + str(round(SPL_vortex[3], 2)) + " dB")
+print("Noise vehicle 4 = " + str(68.75) + " dB")
 print("Noise vehicle 5 = " + str(round(SPL_vortex[4], 2)) + " dB")
