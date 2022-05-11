@@ -128,6 +128,8 @@ for i in range(0,5):
     print("P_climb per 1 rotor", P_climb/1000, "kW")
     print("P_descend per 1 rotor", P_descend/1000, "kW")
     print("P_cruise per 1 rotor", P_hovercruise/1000, "kW")
+
+    # print("P_cruise per 1 rotor thrust",(total_T-(0.5*rho*V_cruise**2*C_L*S_airfoil))/rotors_number, "N")
     print("------------")
 
     # horizontal propellor calc
@@ -145,12 +147,13 @@ for i in range(0,5):
     #mass of a battery
     m_battery = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))/(battery_density*3600*battery_efficiency)
 
-    print("motor structure mass",m_motor_structure)
+    print("motor structure mass",4*m_motor_structure)
     print( "rotor mass", m_motor)
     print( "propeller mass", m_prop)
     print( "hor_rotor mass", m_horimotor)
     print( "hor propeller mass", m_horiprop)
     print("battery mass", m_battery)
+    print("hor propeller radius", horprop_d/2)
 
     #list of iterartions for different mass of rotors and propellers
     lst_new_motor = lst_new_motor + [m_motor]
@@ -176,4 +179,26 @@ print("propeller radius: ", propeller_radius,"m")
 Total_Energy = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
 print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
-#
+
+print()
+print("Concept 2 Total Energy per mission:",Total_Energy/10**6, "MJ" )
+print("Number of rotors:", " 4 rotors with vertical thrust, 1 rotor with horizontal thrust")
+print("------------")
+print("Mass of each vertical thrust rotor", m_motor)
+print("Mass of each horizontal thrust rotor", m_horimotor)
+print( "propeller mass for vertical thrust rotor", m_prop)
+print("propeller radius vertical thrust: ", propeller_radius,"m")
+print( "propeller mass for horizontal thrust rotor", m_horiprop)
+print("propeller radius horizontal thrust: ", horprop_d/2,"m")
+print("------------")
+print("Wing mass: ", Weight_WING/g)
+print("motor structure mass",4*m_motor_structure)
+print("battery mass", m_battery)
+print("Total mass", mass)
+print("------------")
+print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
+print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
+print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
+print("P_cruise per 1 rotor vertical thrust", P_hovercruise/1000, "kW")
+print("P_cruise per 1 rotor horizontal thrust", Total_drag*V_cruise/1000, "kW")
+print("------------")
