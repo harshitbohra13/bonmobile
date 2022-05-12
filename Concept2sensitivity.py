@@ -7,6 +7,8 @@ import drag_calc as drag
 
 print("check check check")
 tail_engine=[]
+draglst=[]
+dragairfoillst=[]
 
 def airfoil_sensitivity(S):
 #airfoil charachteristics
@@ -123,7 +125,7 @@ def airfoil_sensitivity(S):
         P_hovercruise=FOM * np.sqrt(((total_T-(0.5*rho*V_cruise**2*C_L*S_airfoil))/rotors_number)**3/(rho*one_rotor_area))
         #------CRUISE POWER------
         D=0.5*rho* (V_cruise)**2 * S * CD0
-        D_airfoil=0.5*rho*(V_cruise)**2*S_airfoil*C_D 
+        D_airfoil=0.5*rho*(V_cruise)**2 * S_airfoil*C_D 
         Total_drag=D_airfoil+D
 
         P_totalcruise=P_hovercruise+Total_drag*V_cruise
@@ -182,22 +184,19 @@ def airfoil_sensitivity(S):
         print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )    
         print(S,"checkpoint")
         m_horiengine=m_horiprop+m_horimotor
-    return Total_Energy,m_horiengine
+    return Total_Energy,m_horiengine, Total_drag
 
 
 Energy_used=[]
-S_lst=np.arange(1,11,1)
+S_lst=np.arange(1,16,1)
 for i in S_lst:
     Energy_used.append(airfoil_sensitivity(i)[0])
     tail_engine.append(airfoil_sensitivity(i)[1])
+    draglst.append(airfoil_sensitivity(i)[2])
 
 print(tail_engine)
-plt.subplot(121)
 plt.plot(S_lst,Energy_used)
-plt.ylabel("Energy used")
-plt.xlabel("Wing area")
-plt.subplot(122)
-plt.plot(S_lst,tail_engine)
-plt.xlabel("Wing area")
-plt.ylabel("tail_engine")
+plt.ylabel("Energy used [J]")
+plt.xlabel("Wing area [m^2]")
+
 plt.show()
