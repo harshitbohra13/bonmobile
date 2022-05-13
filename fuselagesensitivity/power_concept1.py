@@ -25,10 +25,10 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 12
+rotors_number = 4
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1,
+structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.070
@@ -73,8 +73,8 @@ for i in range(0,5):
     P_climb= P_hover #per 1 rotor
     P_descend =  P_hover #per 1 rotor
 
-    #------CRUISE POWER------
-    D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)
+    #------CRUISE POWER------##
+    D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)  #1.1 for -5alpha drag
     P_cruise=P_hover+(D*V_cruise/rotors_number)
 
     print("------------")
@@ -112,33 +112,33 @@ for i in range(0,5):
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    CD0 = drag.Cd0_design5(rotors_number, propeller_radius, total_T)
+    CD0 = drag.Cd0_design1(rotors_number, propeller_radius, total_T)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
 Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
-print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
+print("Concept 1 Total Energy per mission:",Total_Energy/10**6, "MJ" )
 
-print()
-print()
-print()
-print("Concept 5 Total Energy per mission:",Total_Energy/10**6, "MJ" )
-print("Number of rotors:", " 12 rotors with vertical thrust")
-print("------------")
-print("Mass of each vertical thrust rotor", m_motor)
-print( "propeller mass for vertical thrust rotor", m_prop)
-print("propeller radius vertical thrust: ", propeller_radius,"m")
-print("------------")
-print("motor structure mass",4*m_motor_structure)
-print("battery mass", m_battery)
-print("Total mass", mass)
+# print()
+# print()
+# print()
+# print("Concept 1 Total Energy per mission:",Total_Energy/10**6, "MJ" )
+# print("Number of rotors:", " 4 rotors with vertical thrust")
+# print("------------")
+# print("Mass of each vertical thrust rotor", m_motor)
+# print( "propeller mass for vertical thrust rotor", m_prop)
+# print("propeller radius vertical thrust: ", propeller_radius,"m")
+# print("------------")
+# print("motor structure mass",4*m_motor_structure)
+# print("battery mass", m_battery)
+# print("Total mass", mass)
 
-print("------------")
-print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
-print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
-print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
-print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
-print("------------")
-#
+# print("------------")
+# print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
+# print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
+# print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
+# print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
+# print("------------")
+# #

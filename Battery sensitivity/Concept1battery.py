@@ -3,8 +3,11 @@ import numpy as np
 import drag_calc as drag
 import matplotlib.pyplot as plt
 #data
-def batterychange(m_batdens):
-    mass = 500 #[kg] #aircraft mass
+
+
+def sensfus(batdens):
+
+    mass = 350 #[kg] #aircraft mass
     g = 9.8 
     rho = 1.225
     FOM = 0.75
@@ -21,15 +24,15 @@ def batterychange(m_batdens):
     t_hover = 60 *2 #[s] hovering appears twice
 
     battery_efficiency = 0.85
-    battery_density = m_batdens #Wh/kg
+    battery_density = batdens #Wh/kg
 
     #---concept 1---
     #rotors data
     blades_number = 3
-    rotors_number = 12
+    rotors_number = 4
     disk_loading= 500 # [N/m^2]
     #circular beam
-    structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1,
+    structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
     structure_length = 2
     structure_radius = 0.075
     structure_inner_radius = 0.070
@@ -43,12 +46,14 @@ def batterychange(m_batdens):
 
 
     #list definition
+
+    #iteration for mass and power
+
+
     lst_new_motor = []
     lst_new_prop = []
     lst_m_motor_structure = []
     lst_m_battery = []
-
-    #iteration for mass and power
     i= 0
     for i in range(0,5):
         
@@ -58,7 +63,7 @@ def batterychange(m_batdens):
         one_rotor_area=Total_A/rotors_number
         rotor_d= np.sqrt(4*one_rotor_area/np.pi)
 
-        P_hover = FOM * np.sqrt((total_T/rotors_number)**3/(rho*one_rotor_area)) #[W]
+        P_hover = FOM * np.sqrt(((total_T/rotors_number)**3)/(rho*one_rotor_area)) #[W]
         # print(P_hover, "W")
         # print()
         print(P_hover/1000, "kW")
@@ -67,15 +72,15 @@ def batterychange(m_batdens):
 
         #------CLIMB/DESCEND POWER per 1 rotor----
         
-        v_i = np.sqrt((total_T/rotors_number)/(2*rho*one_rotor_area))    #???????????????????????????????????
+        #v_i = np.sqrt((total_T/rotors_number)/(2*rho*one_rotor_area))    #???????????????????????????????????
         #v_h=np.sqrt(V_climb*np.sqrt((total_T/rotors_number))+((total_T/rotors_number)/(2*rho*one_rotor_area)))
         # print("v_h", v_h)
 
         P_climb= P_hover #per 1 rotor
         P_descend =  P_hover #per 1 rotor
 
-        #------CRUISE POWER------
-        D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)
+        #------CRUISE POWER------##
+        D=1.1*(0.5*rho* (V_cruise)**2 * S * CD0)  #1.1 for -5alpha drag
         P_cruise=P_hover+(D*V_cruise/rotors_number)
 
         print("------------")
@@ -96,10 +101,10 @@ def batterychange(m_batdens):
         #mass of a battery
         m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
-        # print("motor structure mass",4*m_motor_structure)
-        # print( "rotor mass", m_motor)
-        # print( "propeller mass", m_prop)
-        # print("battery mass", m_battery)
+        print("motor structure mass",4*m_motor_structure)
+        print( "rotor mass", m_motor)
+        print( "propeller mass", m_prop)
+        print("battery mass", m_battery)
 
         #list of iterartions for different mass of rotors and propellers
         lst_new_motor = lst_new_motor + [m_motor]
@@ -113,47 +118,46 @@ def batterychange(m_batdens):
             mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
         print("mass", mass)
         propeller_radius = np.sqrt(one_rotor_area/np.pi)
-        CD0 = drag.Cd0_design5(rotors_number, propeller_radius, total_T)
+        CD0 = drag.Cd0_design1(rotors_number, propeller_radius, total_T)
         i=i+1
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
     print("propeller radius: ", propeller_radius,"m")
 
     #TOTAL ENERGY:
     Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
-    print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
-
-    # print()
-    # print()
-    # print()
-    # print("Concept 5 Total Energy per mission:",Total_Energy/10**6, "MJ" )
-    # print("Number of rotors:", " 12 rotors with vertical thrust")
-    # print("------------")
-    # print("Mass of each vertical thrust rotor", m_motor)
-    # print( "propeller mass for vertical thrust rotor", m_prop)
-    # print("propeller radius vertical thrust: ", propeller_radius,"m")
-    # print("------------")
-    # print("motor structure mass",4*m_motor_structure)
-    # print("battery mass", m_battery)
-    # print("Total mass", mass)
-
-    # print("------------")
-    # print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
-    # print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
-    # print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
-    # print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
-    # print("------------")
+    print("Concept 1 Total Energy per mission:",Total_Energy/10**6, "MJ" )
     return mass
 
+# print()
+# print()
+# print()
+# print("Concept 1 Total Energy per mission:",Total_Energy/10**6, "MJ" )
+# print("Number of rotors:", " 4 rotors with vertical thrust")
+# print("------------")
+# print("Mass of each vertical thrust rotor", m_motor)
+# print( "propeller mass for vertical thrust rotor", m_prop)
+# print("propeller radius vertical thrust: ", propeller_radius,"m")
+# print("------------")
+# print("motor structure mass",4*m_motor_structure)
+# print("battery mass", m_battery)
+# print("Total mass", mass)
 
-Total_mass=[]
-batdenslst=np.arange(150,700,3)
-for i in batdenslst:
-    Total_mass.append(batterychange(i))
-    
+# print("------------")
+# print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
+# print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
+# print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
+# print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
+# print("------------")
+# #
 
-print(Total_mass)
-plt.plot(batdenslst,Total_mass)
-plt.ylabel("Total mass")
-plt.xlabel("Battery density")
+batdens=np.arange(100,501,2)
+lst_totalmass=[]
+for i in batdens:
+    lst_totalmass.append(sensfus(i))
 
+
+print(lst_totalmass)
+plt.plot(batdens,lst_totalmass)
+plt.xlabel("Battery density [Wh/kg]")
+plt.ylabel("Total mass [kg]")
 plt.show()

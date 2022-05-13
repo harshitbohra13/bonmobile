@@ -3,7 +3,7 @@ import numpy as np
 import drag_calc as drag
 #data
 
-mass = 500 #[kg] #aircraft mass
+mass = 350 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
@@ -16,8 +16,8 @@ V_cruise=100/3.6 #m/s
 
 t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
-t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
-t_hover = 60 *2 #[s] hovering appears twice
+t_cruise = 40/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
+t_hover = 60*2 #[s] hovering appears twice
 
 battery_efficiency = 0.85
 battery_density = 250 #Wh/kg
@@ -93,7 +93,7 @@ for i in range(0,5):
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
-    m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
+    m_battery = rotors_number*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",4*m_motor_structure)
     print( "rotor mass", m_motor)
@@ -118,7 +118,7 @@ propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
-Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
+Total_Energy = rotors_number*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
 print("Concept 1 Total Energy per mission:",Total_Energy/10**6, "MJ" )
 
 # print()

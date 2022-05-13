@@ -13,7 +13,7 @@ n_ult=3.75
 AR=8.3
 
 # mass = 500+ 0.04674*(1000**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft 
-mass = 500
+mass = 400
 # Sw = 20
 # t_c = 0.15
 # taper_ratio = 0.3

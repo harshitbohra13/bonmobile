@@ -3,8 +3,8 @@ import numpy as np
 import drag_calc as drag
 import matplotlib.pyplot as plt
 #data
-def batterychange(m_batdens):
-    mass = 500 #[kg] #aircraft mass
+def sensfus(batdens):
+    mass = 350 #[kg] #aircraft mass
     g = 9.8 
     rho = 1.225
     FOM = 0.75
@@ -21,7 +21,7 @@ def batterychange(m_batdens):
     t_hover = 60 *2 #[s] hovering appears twice
 
     battery_efficiency = 0.85
-    battery_density = m_batdens #Wh/kg
+    battery_density = batdens #Wh/kg
 
     #---concept 1---
     #rotors data
@@ -96,10 +96,10 @@ def batterychange(m_batdens):
         #mass of a battery
         m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
-        # print("motor structure mass",4*m_motor_structure)
-        # print( "rotor mass", m_motor)
-        # print( "propeller mass", m_prop)
-        # print("battery mass", m_battery)
+        print("motor structure mass",4*m_motor_structure)
+        print( "rotor mass", m_motor)
+        print( "propeller mass", m_prop)
+        print("battery mass", m_battery)
 
         #list of iterartions for different mass of rotors and propellers
         lst_new_motor = lst_new_motor + [m_motor]
@@ -120,7 +120,8 @@ def batterychange(m_batdens):
 
     #TOTAL ENERGY:
     Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
-    print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
+    return mass
+    # print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
     # print()
     # print()
@@ -142,18 +143,17 @@ def batterychange(m_batdens):
     # print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
     # print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
     # print("------------")
-    return mass
+    # #
 
 
-Total_mass=[]
-batdenslst=np.arange(150,700,3)
-for i in batdenslst:
-    Total_mass.append(batterychange(i))
-    
+batdens=np.arange(100,501,2)
+lst_totalmass=[]
+for i in batdens:
+    lst_totalmass.append(sensfus(i))
 
-print(Total_mass)
-plt.plot(batdenslst,Total_mass)
-plt.ylabel("Total mass")
-plt.xlabel("Battery density")
 
+print(lst_totalmass)
+plt.plot(batdens,lst_totalmass)
+plt.xlabel("Battery density [Wh/kg]")
+plt.ylabel("Total mass [kg]")
 plt.show()
