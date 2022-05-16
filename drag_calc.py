@@ -62,8 +62,8 @@ def Cd0_design2(rotors_number, propeller_radius, total_T, hoverthrust, horprop_d
     Cd0_structures = 0.1
     Cd0_rotors = 0 
     
-    for i in range(0, number_rotors):
-        Cd0_rotors = Cd0_rotors + rotor_drag(T/number_rotors, radius_rotor, number_rotors) 
+    # for i in range(0, number_rotors):
+    #     Cd0_rotors = Cd0_rotors + rotor_drag(T/number_rotors, radius_rotor, number_rotors) 
     Cd0_rotors += rotor_drag90(hoverthrust, horprop_d/2)
     return(Cd0_rotors+Cd0_structures+Cd0_fuesalage)
 
