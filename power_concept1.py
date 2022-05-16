@@ -3,7 +3,7 @@ import numpy as np
 import drag_calc as drag
 #data
 
-mass = 350 #[kg] #aircraft mass
+mass = 220 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
@@ -12,11 +12,12 @@ S=7
 
 V_descend=7 #m/s
 V_climb = 7 #m/s
-V_cruise=100/3.6 #m/s
+V_cruise=60/3.6 #m/s
+h_alt=500
 
-t_climb=(450-30.5)/ V_climb #s
+t_climb=(h_alt-30.5)/ V_climb #s
 t_descend= t_climb #s
-t_cruise = 40/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
+t_cruise = 18/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60*2 #[s] hovering appears twice
 
 battery_efficiency = 0.85
@@ -25,8 +26,8 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 4
-disk_loading= 500 # [N/m^2]
+rotors_number = 16
+disk_loading= 200 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
 structure_length = 2

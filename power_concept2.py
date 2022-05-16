@@ -4,22 +4,22 @@ import drag_calc as drag
 
 #airfoil charachteristics
 alpha=5
-C_D=0.008
-C_L=0.5
+C_D=0.005
+C_L=0.3
 
 
-S_airfoil=10
+S_airfoil=8.7
 n_ult=3.75
 AR=8.3
 
 # mass = 500+ 0.04674*(1000**0.397)*(S_airfoil**0.36)*(n_ult**0.397)*AR**1.712 #[kg] #aircraft 
-mass = 400
+mass = 350
 # Sw = 20
 # t_c = 0.15
 # taper_ratio = 0.3
 # mass_WING = (0.0051*(1200*n_ult)**0.557*Sw**0.649*AR**0.5*t_c**(-0.4)*(1+taper_ratio)**0.1*np.cos(np.radians(20))**(-1)*1)#[kg] #aircraft mass
 # print("!!!!!!!!!!!!!!",mass_WING)
-W_to = 1490 * 9.8
+W_to = 800 * 9.8
 W_D = W_to
 n_ult=3.75
 S = S_airfoil
@@ -41,7 +41,7 @@ print("WIIIIIIING:", Weight_WING/g)
 
 rho = 1.225
 FOM = 0.75
-CD0=0.3
+CD0=0.2
 S=7 #???????
 # Weight_WING = 100
 # mass = mass+ Weight_WING 
@@ -49,11 +49,11 @@ S=7 #???????
 
 V_descend=7 #m/s
 V_climb = 7 #m/s
-V_cruise=100/3.6 #m/s
+V_cruise=180/3.6 #m/s
 
 t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
-t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
+t_cruise = 50/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60 *2 #[s] hovering appears twice
 
 #BATTERIES
@@ -66,7 +66,7 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 4
+rotors_number = 8
 disk_loading= 500 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
@@ -115,7 +115,15 @@ for i in range(0,5):
 
     P_climb= P_hover #per 1 rotor
     P_descend =  P_hover #per 1 rotor
-    P_hovercruise=FOM * np.sqrt(((total_T-(0.5*rho*V_cruise**2*C_L*S_airfoil))/rotors_number)**3/(rho*one_rotor_area))
+    LLL=0.5*rho*V_cruise**2*C_L*S_airfoil
+    if LLL>=total_T:
+        P_hovercruise=0
+        LLL=total_T
+
+    else:
+        P_hovercruise=FOM * np.sqrt(((total_T-(LLL))/rotors_number)**3/(rho*one_rotor_area))
+
+
     #------CRUISE POWER------
     D=0.5*rho* (V_cruise)**2 * S * CD0
     D_airfoil=0.5*rho*(V_cruise)**2*S_airfoil*C_D 
@@ -145,7 +153,7 @@ for i in range(0,5):
     #mass of a strut
     m_motor_structure = structure_length * structure_Area * structure_density
     #mass of a battery
-    m_battery = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))/(battery_density*3600*battery_efficiency)
+    m_battery = (Total_drag*V_cruise*t_cruise + rotors_number*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))/(battery_density*3600*battery_efficiency)
 
     print("motor structure mass",4*m_motor_structure)
     print( "rotor mass", m_motor)
@@ -170,8 +178,9 @@ for i in range(0,5):
     print("mass", mass)
     
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d)
+    #CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d)
     i=i+1
+    
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
