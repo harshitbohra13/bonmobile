@@ -19,7 +19,7 @@ mass = 350
 # taper_ratio = 0.3
 # mass_WING = (0.0051*(1200*n_ult)**0.557*Sw**0.649*AR**0.5*t_c**(-0.4)*(1+taper_ratio)**0.1*np.cos(np.radians(20))**(-1)*1)#[kg] #aircraft mass
 # print("!!!!!!!!!!!!!!",mass_WING)
-W_to = 800 * 9.8
+W_to = 500 * 9.8
 W_D = W_to
 n_ult=3.75
 S = S_airfoil
@@ -41,7 +41,7 @@ print("WIIIIIIING:", Weight_WING/g)
 
 rho = 1.225
 FOM = 0.75
-CD0=0.2
+CD0=0.1
 S=7 #???????
 # Weight_WING = 100
 # mass = mass+ Weight_WING 
@@ -49,11 +49,11 @@ S=7 #???????
 
 V_descend=7 #m/s
 V_climb = 7 #m/s
-V_cruise=180/3.6 #m/s
+V_cruise=150/3.6 #m/s
 
 t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
-t_cruise = 50/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
+t_cruise = 80/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60 *2 #[s] hovering appears twice
 
 #BATTERIES
@@ -67,7 +67,7 @@ battery_density = 250 #Wh/kg
 #rotors data
 blades_number = 3
 rotors_number = 8
-disk_loading= 500 # [N/m^2]
+disk_loading= 300 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
 structure_length = 1
@@ -185,7 +185,7 @@ propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
-Total_Energy = (2*Total_drag*V_cruise*t_cruise + rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
+Total_Energy = (Total_drag*V_cruise*t_cruise + rotors_number*(P_hover*t_hover +  P_climb*t_climb + P_hovercruise*t_cruise + P_descend * t_descend))
 print("Concept 2 Total Energy per mission:",Total_Energy/1000, "KJ" )
 
 
