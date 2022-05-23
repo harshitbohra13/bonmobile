@@ -12,7 +12,7 @@ S=7
 
 V_descend=7 #m/s
 V_climb = 7 #m/s
-V_cruise=60/3.6 #m/s
+V_cruise=100/3.6 #m/s
 h_alt=500
 
 t_climb=(h_alt-30.5)/ V_climb #s
@@ -26,7 +26,7 @@ battery_density = 250 #Wh/kg
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 16
+rotors_number = 4
 disk_loading= 200 # [N/m^2]
 #circular beam
 structure_penalty = 1 #structure penalty for additional mass with regards to concept 1
@@ -41,7 +41,6 @@ structure_density = 2700 #[kg/m**3]
 
 
 
-
 #list definition
 lst_new_motor = []
 lst_new_prop = []
@@ -50,7 +49,7 @@ lst_m_battery = []
 
 #iteration for mass and power
 i= 0
-for i in range(0,5):
+for i in range(0,10):
     
     #----HOVER POWER per 1 rotor------
     total_T = mass*g # total thrust
@@ -113,7 +112,7 @@ for i in range(0,5):
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    CD0 = drag.Cd0_design1(rotors_number, propeller_radius, total_T)
+    CD0 = drag.Cd0_design1(rotors_number, propeller_radius, total_T, structure_Area, S)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")

@@ -4,8 +4,8 @@ import drag_calc as drag
 
 #airfoil charachteristics
 alpha=5
-C_D=0.005
-C_L=0.3
+C_D=0.00913
+C_L=0.36
 
 
 S_airfoil=8.7
@@ -49,7 +49,7 @@ S=7 #???????
 
 V_descend=7 #m/s
 V_climb = 7 #m/s
-V_cruise=150/3.6 #m/s
+V_cruise=100/3.6 #m/s
 
 t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
@@ -178,7 +178,7 @@ for i in range(0,5):
     print("mass", mass)
     
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    #CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d)
+    CD0 = drag.Cd0_design2(rotors_number, propeller_radius, total_T, P_hovercruise/V_cruise, horprop_d, S)
     i=i+1
     
 propeller_radius = np.sqrt(one_rotor_area/np.pi)

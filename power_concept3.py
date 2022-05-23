@@ -114,7 +114,7 @@ for i in range(0,5):
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    CD0 = drag.Cd0_design3(rotors_number, propeller_radius, total_T)
+    CD0 = drag.Cd0_design3(rotors_number, propeller_radius, total_T, structure_Area, S)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
