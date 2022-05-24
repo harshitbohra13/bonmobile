@@ -1,3 +1,8 @@
+
+
+from sqlalchemy import null
+
+
 Total_Supporting_structure_mass = 0
 
 #Structures data
@@ -8,3 +13,5 @@ Max_Total_thrust = 0
 #Thrust per rotor
 Max_thrust_per_rotor = Max_Total_thrust/Rotor_number
 
+def sup_struct_mass():
+    return null
