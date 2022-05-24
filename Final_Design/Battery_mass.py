@@ -1,0 +1,1 @@
+Total_Battery_mass = 0

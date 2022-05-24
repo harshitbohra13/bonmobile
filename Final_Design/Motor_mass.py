@@ -1,0 +1,1 @@
+Total_Motor_mass = 0

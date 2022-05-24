@@ -1,11 +1,13 @@
-Total_Motor_mass = 0
-Total_Propeller_mass = 0
-Total_Battery_mass = 0
-Total_Supporting_structure_mass = 0
-Total_Undercarriage_mass = 0
-Total_fuselage_mass = 0
-Total_electronics_mass = 0
+#importing different subsytems' mass
+from Motor_mass import Total_Motor_mass
+from Propeller_mass import Total_Propeller_mass
+from Battery_mass import Total_Battery_mass
+from Sup_struct_mass import Total_Supporting_structure_mass
+from Skid_mass import Total_Skid_mass
+from Fuselage_mass import Total_Fuselage_mass
+from Electronics_mass import Total_Electronics_mass
 
-Total_vehicle_OEW = Total_Motor_mass + Total_Propeller_mass + Total_Battery_mass + Total_Supporting_structure_mass + Total_Undercarriage_mass + Total_fuselage_mass + Total_electronics_mass
-
+#Estimation of vehicle OEW
+Total_vehicle_OEW = Total_Motor_mass + Total_Propeller_mass + Total_Battery_mass + Total_Supporting_structure_mass + Total_Skid_mass + Total_Fuselage_mass + Total_Electronics_mass
+print("Total vehicle OEW: ",Total_vehicle_OEW)
 

@@ -1,0 +1,1 @@
+Total_Fuselage_mass = 0
