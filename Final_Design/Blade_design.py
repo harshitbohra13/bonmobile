@@ -151,11 +151,11 @@ class Bladedesign:
         epsilon1=epsilon
         phi1=phi
         labda1=labda
-        I1=quad(I1_prime,0,1, rgs=(G1,epsilon1,phi1))
-        J1=quad(J1_prime,0,1, args=(G1,epsilon1,phi1))
-        I2=quad(I2_prime,0,1, args=(G1,epsilon1,phi1,labda1))
-        J2=quad(J2_prime,0,1, args=(G1,epsilon1,phi1))
-        return  I1, I2, J1, J2
+        I1=quad(I1_prime, 0, 1, args=(G1,epsilon1,phi1))
+        J1=quad(J1_prime, 0, 1, args=(G1,epsilon1,phi1))
+        I2=quad(I2_prime, 0, 1, args=(G1,epsilon1,phi1,labda1))
+        J2=quad(J2_prime, 0, 1, args=(G1,epsilon1,phi1))
+        return I1, I2, J1, J2
 
 
     # step 9 of paper
@@ -180,12 +180,6 @@ class Bladedesign:
     # step 11 of paper
     # compute propeller efficiency and other features tbd which one are of importance
 
-    
-
-    
-
-    
-    
 
     def displacement_velocity(phi, w_n):
         v_displace=w_n/np.cos(phi)
