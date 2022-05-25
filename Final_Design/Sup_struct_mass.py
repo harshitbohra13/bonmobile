@@ -10,7 +10,7 @@ from
 Max_thrust_per_rotor = Max_Total_thrust/Rotor_number
 
 def Strut_1(Fuselage_width, fuselage_rotor_clearance, rotor_radius, safety_factor, T_max, r_outer, Density_1):
-    Length_1 = (Fuselage_ width/2) * np.sqrt(2) + np.sqrt(2) * (fuselage_rotor_clearance+rotor_radius)
+    Length_1 = (Fuselage_width/2) * np.sqrt(2) + np.sqrt(2) * (fuselage_rotor_clearance+rotor_radius)
     max_stress = y_strength_mat1/safety_factor
     M = 0.25* T_max * Length_1
     I = (M*r_outer)/(max_stress)
