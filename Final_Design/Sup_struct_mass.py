@@ -25,7 +25,7 @@ def sup_struct_mass(Rotor_number, ):
     return null
 
 def Strut_2(Fuselage_width, fuselage_rotor_clearance, rotor_radius, safety_factor, T_max, r_outer, Density_2):
-    Length_2 = 
+    Length_2 = 1
     max_stress = y_strength_mat2/safety_factor
     M = 0.25* T_max * Length_2
     I = (M*r_outer)/(max_stress)
