@@ -1,7 +1,8 @@
 from sqlalchemy import null
 from Battery_mass import Max_Total_thrust
 from configuration_and_materials import *
-from 
+from Fuselage_mass import *
+from Motor_mass import *
 
 # Total_Supporting_structure_mass = 0
 
