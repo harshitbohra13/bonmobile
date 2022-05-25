@@ -142,10 +142,10 @@ class Bladedesign:
             return 4*xi1*G1*(1-epsilon1*np.tan(phi1))
         def J1_prime(G1,epsilon1, phi1, xi1):
             return 4*xi1 *G1*(1+epsilon1/np.tan(phi1))
-        def I2_prime(G1,epsilon1, phi1, labda1):
+        def I2_prime(G1,epsilon1, phi1, labda1, xi):
             return labda1*(2*G1*(1-epsilon1*np.tan(phi1)))*(1+epsilon1/np.tan(phi1))*np.sin(phi1)*np.cos(phi1)     
-        def J2_prime(G2,epsilon2, phi2, x2):
-            return (2*x2*G2*(1-epsilon1*np.tan(phi1)))*(1-epsilon1*np.tan(phi1))*(np.cos(phi1)**2)
+        def J2_prime(G1,epsilon1, phi1, x1):
+            return (2*x1*G1*(1-epsilon1*np.tan(phi1)))*(1-epsilon1*np.tan(phi1))*(np.cos(phi1)**2)
         
         G1=G
         epsilon1=epsilon
@@ -153,17 +153,32 @@ class Bladedesign:
         labda1=labda
         I1=quad(I1_prime,0,1, rgs=(G1,epsilon1,phi1))
         J1=quad(J1_prime,0,1, args=(G1,epsilon1,phi1))
-        I2=quad(I1_prime,0,1, args=(G1,epsilon1,phi1))
-        J2=quad(J1_prime,0,1, args=(G1,epsilon1,phi1))
+        I2=quad(I2_prime,0,1, args=(G1,epsilon1,phi1,labda1))
+        J2=quad(J2_prime,0,1, args=(G1,epsilon1,phi1))
+        return  I1, I2, J1, J2
 
-    return 
 
-    
-    
-    
+    # step 9 of paper
+    # computation of displacement velocity ratio
+
+    def displacement_velocity_ratio_throughthrust(I1,I2,T_c,J1,J2):
+        zeta=(I1/2*I2)-np.sqrt((I1/2*I2)**2-T_c/I2)
+        P_c=J1*zeta+J2*zeta**2
+        return zeta,P_c
+
+    def displacement_velocity_ratio_throughpower(P_c,J1,J2,I1,I2):
+        zeta=-(J1/2*J2)+np.sqrt((J2/2*J2)**2+P_c/J2)
+        T_c=I1*zeta-I2*zeta**2
+        return zeta, T_c
 
    
-    
+    # step 10 of paper
+    # if displacement velocity ration is not 0.1 % close to the initial value reiterate
+
+
+
+    # step 11 of paper
+    # compute propeller efficiency and other features tbd which one are of importance
 
     
 
