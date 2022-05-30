@@ -34,23 +34,23 @@ class Bladedesign:
         return A
 
     def propeller_radius(A):
-        R=np.sqrt(A/np.pi)
+        R = np.sqrt(A/np.pi)
         return R
 
     def nondimensional_radius(r, R):
-        xi= r/R
+        xi = r/R
         return xi
 
     def speed_ratio(V_freestream, omega, R):
-            labda=V_freestream/(omega*R)
+            labda = V_freestream/(omega*R)
             return labda
 
     def freestream_velocity(aoa, V_cruise):
-        V_freestream=np.cos(aoa)*V_cruise      # incoming flow propeller to be calculated with aoa and cruise speed
+        V_freestream = np.cos(aoa)*V_cruise      # incoming flow propeller to be calculated with aoa and cruise speed
         return V_freestream
 
     def angular_velocity(RPM):
-        omega=RPM*0.10472
+        omega = RPM*0.10472
         return omega
 
     def radial_coordinates(blade_elements, R, hub):
@@ -61,23 +61,23 @@ class Bladedesign:
         return list_radialcoors, dr
 
     # step 1 of paper
-    zeta_initial=0
+    zeta_initial = 0
 
     # Step 2 of paper
     def prandtlequation(f):                             # Equation 18
-        F=(2/np.pi)*np.arcos(np.exp(-f))
+        F = (2/np.pi)*np.arcos(np.exp(-f))
         return F
         
     def prandtlconstant(B, zheta_initial, phi_tip):     # Equation 19
-        f=((B/2)*(1-zheta_initial))/np.sin(phi_tip)
+        f = ((B/2)*(1-zheta_initial))/np.sin(phi_tip)
         return f    
         
     def flowangle_tip(zheta_initial, labda):            # Equation 20
-        phi_tip=np.arctan(labda*(1+zheta_initial/2))
+        phi_tip = np.arctan(labda*(1+zheta_initial/2))
         return phi_tip    
         
     def flow_angle_element(phi_tip, xi):                # Equation 21
-        phi=np.arctan(np.tan(phi_tip)/xi)
+        phi = np.arctan(np.tan(phi_tip)/xi)
         return phi    
 
     # Step 3 of paper
@@ -85,12 +85,12 @@ class Bladedesign:
     # a list of phi is required as well as a list of F for every blade element.
 
     def circulation_fucntion(phi, F):
-        goniometric_part= np.cos(phi) * np.sin(phi) # has to be cross product
-        G=np.cross(F, goniometric_part)
+        goniometric_part = np.cos(phi) * np.sin(phi)  # has to be cross product
+        G = np.cross(F, goniometric_part)
         return G
 
     def Wcproduct(labda, G, V, R, zeta_initial, C_l, B): # Equation 16
-        Wc=4*np.pi*labda*G*V*R*zeta_initial/(C_l*B)
+        Wc = 4*np.pi*labda*G*V*R*zeta_initial/(C_l*B)
         return Wc
     
     # Step 4 of paper
@@ -106,28 +106,28 @@ class Bladedesign:
     # step 6 of paper
 
     def actual_interference_factor(zeta,phi, epsilon):
-        a=(zeta/2)*(np.cos(phi))**2 * (1-epsilon*np.tan(phi))
+        a = (zeta/2)*(np.cos(phi))**2 * (1-epsilon*np.tan(phi))
         return a
 
     def rotational_interference_factor(x, zeta, phi, epsilon):
-        a_prime=(zeta/2*x)*np.cos(phi)*np.sin(phi) *(1+ epsilon/np.tan(phi))
+        a_prime = (zeta/2*x)*np.cos(phi)*np.sin(phi) *(1+ epsilon/np.tan(phi))
         return a_prime
 
     def relation_labda_xi(labda, xi):
-        x=xi/labda
+        x = xi/labda
         return x
 
     def total_velocity(V_freestream, a, phi):
-        W=V_freestream*(1+a)/np.sin(phi)
+        W = V_freestream*(1+a)/np.sin(phi)
         return W
     
     # step 7 of paper
-    def chord(Wc,W):
-        c=Wc/W
+    def chord(Wc, W):
+        c = Wc/W
         return c
     
     def blade_twist(phi, alpha):
-        beta=phi+alpha
+        beta = phi+alpha
         return beta
 
     # step 8 of paper
@@ -176,13 +176,14 @@ class Bladedesign:
     # compute propeller efficiency and other features tbd which one are of importance
 
     def displacement_velocity(phi, w_n):
-        v_displace=w_n/np.cos(phi)
+        v_displace = w_n/np.cos(phi)
         return v_displace
 
 
 def prandtlequation(blade):                             # Equation 18
-    blade.F=(2/np.pi)*np.arcos(np.exp(-blade.f))
+    blade.F = (2/np.pi)*np.arcos(np.exp(-blade.f))
     return blade
+
 
 A = 1
 
