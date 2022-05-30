@@ -10,7 +10,7 @@ from scipy.integrate import quad
 
 
 class Bladedesign:
-
+    
     #input parameters 
     TP=0  # if 0 then for thrust if 1 then power
     B=2
@@ -25,9 +25,11 @@ class Bladedesign:
     R=1  
     aoa=0.5    # [rad]
     C_l=[]     # list of lift coefficients for blade elements
-    
+    A = 0
 
-
+    def __init__(self):
+        pass
+        
 
     # Basic Equations
     def rotor_area(thrust_req, disk_loading):
@@ -173,7 +175,7 @@ class Bladedesign:
 
    
     # step 10 of paper
-    # if displacement velocity ration is not 0.1 % close to the initial value reiterate
+    # if displacement velocity ration is not within 0.1%  to the initial value=> reiterate
 
 
 
@@ -185,15 +187,19 @@ class Bladedesign:
         v_displace=w_n/np.cos(phi)
         return v_displace
 
-    # def displacement_velocity_ratio():
-    #     zeta=                                 #zeta initial for now
-    #     return zeta
-    
-    def  tangential_velocity():
-        V*zeta
-        return
 
+def prandtlequation(blade):                             # Equation 18
+    blade.F=(2/np.pi)*np.arcos(np.exp(-blade.f))
+    return blade
 
-    def normal_velocity(w_t, phi):
-        w_n=w_t/np.cos(phi)
-        return w_n
+A = 1
+
+bonprop = Bladedesign()
+
+def iterate(bonprop1):
+    bonprop1 = prandtlequation(bonprop1)
+    return(bonprop1)
+
+for i in range(0, 100):
+    bonprop = iterate(bonprop)
+
