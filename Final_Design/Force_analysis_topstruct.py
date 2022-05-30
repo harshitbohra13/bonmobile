@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class DPTrusses:
+class DPTrusses:                # 👋
     n = 12                      # Number of rotors
     T_vec = np.zeros(n, 1)      # Initialise a vector containing the thrust at each point
     Lbc = 1                     # [m], length of beam BC
