@@ -54,7 +54,7 @@ class Bladedesign:
         return omega
 
     def radial_coordinates(blade_elements, R, hub):
-        dr=(R-hub)/blade_elements
+        dr = (R-hub)/blade_elements
         list_radialcoors=[hub+0.5*dr]
         for i in range(blade_elements-1):   
             list_radialcoors.append(list_radialcoors[i]+width)
@@ -192,7 +192,7 @@ bonprop = Bladedesign()
 
 def iterate(bonprop1):
     bonprop1 = prandtlequation(bonprop1)
-    return(bonprop1)
+    return bonprop1
 
 
 for i in range(0, 100):
