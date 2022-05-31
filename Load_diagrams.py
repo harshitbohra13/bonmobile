@@ -3,18 +3,30 @@ import matplotlib.pyplot as plt
 
 class LoadDiagrams():
 
-    def __init__(self, disk_loading):
+    def __init__(self, disk_loading, W, omega, AoA):
+        self.AoA = AoA*np.pi/180
         self.rho = 1.225
         self.disk_loading = disk_loading
         self.n_rotors = 12
-        self.R_rotor = 0.62
-        self.A_rotor = self.R_rotor**2 * np.pi
-        self.W = 4414
-        self.A_T = self.A_rotor * self.n_rotors
-        self.C_T = 0.0016385
-        self.omega = 628.318531
-        self.v_h = np.sqrt(self.disk_loading/2*self.rho)
-        self.C_T =
+        self.W = W*9.81
+
+        self.A_T = self.W / self.disk_loading
+        self.A_rotor = self.A_T/self.n_rotors
+        self.R_rotor = np.sqrt(self.A_rotor/np.pi)
+
+        self.omega = omega*0.1047198
+        self.v_h = np.sqrt(self.disk_loading/(2*self.rho))
+        self.C_T = self.disk_loading/(self.rho*self.omega**2*self.R_rotor**2)
+        self.V_C = 100/3.6
+
+        self.Cdo = 0.86
+        self.S = 100
+
+    def print_rotor_data(self):
+        print(f'Area rotor = {self.A_rotor}')
+        print(f'Rotor diameter= {2*self.R_rotor}')
+        print(f'Hover inflow speed= {self.v_h}')
+        print(f'Thrust coefficient= {self.C_T}')
 
     def get_advance_ratio(self, V_c, AoA):
 
@@ -39,81 +51,99 @@ class LoadDiagrams():
             inflow_ratio =  mu_x * np.tan(AoA) + self.C_T / (2*np.sqrt(mu_x**2 + start_ratio**2)) + mu_y
         return inflow_ratio
 
-    def plot_inflow_speed(self, AoA):
+    def plot_inflow_speed(self):
         hover_inflow = np.sqrt(self.C_T/2)
         speed_range = np.arange(0, 50, 1)
-        mu_x_lambda_h = [self.get_advance_ratio(i, AoA)[0]/hover_inflow for i in speed_range]
+        mu_x_lambda_h = [self.get_advance_ratio(i, self.AoA)[0]/hover_inflow for i in speed_range]
         print(mu_x_lambda_h)
-        lambda_lambda_h = [self.get_inflow_ratio(i, AoA)/hover_inflow for i in speed_range]
+        lambda_lambda_h = [self.get_inflow_ratio(i, self.AoA)/hover_inflow for i in speed_range]
         print(lambda_lambda_h)
         plt.plot(mu_x_lambda_h, lambda_lambda_h)
         plt.show()
 
-    def get_trust(self, V_c, V_v, AoA):
-        v_i = (self.get_inflow_ratio(V_c, AoA)*self.omega*self.R_rotor) - (V_c*np.sin(AoA))
-        print(v_i)
-        T = 2*self.rho*self.A_T * (v_i + V_v) * np.sqrt(V_c**2 + (V_c*np.sin(AoA) +v_i)**2)
+    def get_v_i(self, V_c, AoA):
+        v_i = (self.get_inflow_ratio(V_c, AoA) * self.omega * self.R_rotor) - (V_c * np.sin(AoA))
+        return v_i
+
+    def get_thrust(self, V_c, V_v):
+        v_i = self.get_v_i(V_c, self.AoA)
+        T = 2*self.rho*self.A_T * (v_i + V_v) * np.sqrt(V_c**2 + (V_c*np.sin(self.AoA) +v_i)**2)
         return T
 
-    def get_load_factor(self, V_c, V_v, AoA):
-        return self.get_trust(V_c, V_v, AoA) / self.W
+    def get_load_factor(self, V_c, V_v):
+        return self.get_thrust(V_c, V_v) / self.W
 
-    def get_load_diagram_cruise(self, AoA):
-        x = np.arange(0, 38.9, 0.1)
-        y = [self.get_load_factor(V_C, 0, AoA) for V_C in x]
+    def loads_cruise(self):
+        x = np.arange(0, 40, 0.1)
+        y = [self.get_load_factor(V_C, 0) for V_C in x]
         plt.plot(x, y)
         plt.xlabel('$V_{\inf} (m/s)$')
         plt.ylabel('n')
         plt.legend()
         plt.show()
 
-    def get_load_diagram_ax_climb(self, AoA):
+    def loads_verticlimb(self):
         x = np.arange(0, 10, 0.1)
-        y = [self.get_load_factor(0, V_v, AoA) for V_v in x]
+        y = [self.get_load_factor(0, V_v) for V_v in x]
         plt.plot(x, y)
         plt.xlabel('$V_{v} (m/s)$')
         plt.ylabel('n')
         plt.legend()
         plt.show()
 
-    def get_load_diagram_ax_descent(self, AoA):
+    def loads_vertidescent(self):
         x = np.arange(0, -10, 0.1)
-        y = [self.get_load_factor(0, V_v, AoA) for V_v in x]
+        y = [self.get_load_factor(0, V_v) for V_v in x]
         plt.plot(x, y)
         plt.xlabel('$V_{v} (m/s)$')
         plt.ylabel('n')
         plt.legend()
         plt.show()
 
+    def inflow_thrust(self):
+        v_c = np.arange(0, 36.4, 0.1)
+        v_i = [self.get_v_i(V_h, self.AoA) for V_h in v_c]
+        inflow_speed = v_i + v_c*np.sin(self.AoA)
+        T = [self.get_thrust(V_h, 0) for V_h in v_c]
+        plt.plot(inflow_speed, T)
+        plt.xlabel('$V_{inflow} (m/s)$')
+        plt.ylabel('T')
+        plt.legend()
+        plt.show()
+
+    def inflow_aoa(self):
+        AoA_range = np.arange(0, 15, 0.1)*np.pi/180
+        v_i = [self.get_v_i(self.V_C, AoA)for AoA in AoA_range]
+        plt.plot(np.arange(0, 15, 0.1), v_i)
+        plt.xlabel('\u03B1 (\u03B1)')
+        plt.ylabel('$V_{inflow} (m/s)$')
+        plt.legend()
+        plt.show()
+
+    def inflow_cruise(self):
+        V_c_range = np.arange(0, 200, 0.1)
+        v_i = [self.get_v_i(V_c, self.AoA)for V_c in V_c_range]
+        plt.plot(V_c_range, v_i)
+        plt.xlabel('$V_{c} (m/s)$')
+        plt.ylabel('$V_{inflow} (m/s)$')
+        plt.legend()
+        plt.show()
+
+    def program_input(self):
+        print('For input:')
+        print(f'Disk Loading = {self.disk_loading} (N/m^2)')
+        print(f'Weight = {self.W} kg')
+        print(f'rpm = {self.omega/0.1047198}')
+        print(f'AoA = {self.AoA*180/np.pi} deg\n')
+        print(f'The inputs to the program are:')
+        print(f'Rotor diameter = {self.R_rotor*2} (m)')
+        print(f'Inflow velocity = {self.get_v_i(self.V_C, self.AoA)} (m/s)')
+        print(f'Thrust single engine = {self.get_thrust(self.V_C, 0)/12} (N)')
 
 
 
 
-diagram = LoadDiagrams(1.225)
+# Input: Disk Loading (N/m^2), Weight (kg), rpm, AoA (deg)
+diagram = LoadDiagrams(500, 540, 8000, 10)
+diagram.program_input()
 
-diagram.get_load_diagram_cruise(3*np.pi/180)
-diagram.get_load_diagram_ax_climb(3*np.pi/180)
-#diagram.get_load_diagram_ax_descent(0.1)
-#diagram.get_3d_load_diagram(0.1)
-#diagram.plot_inflow_speed(0.08)
-#print(diagram.get_advance_ratio(100, 0))
-#print(diagram.get_inflow_ratio(100, 0))
-print(diagram.get_trust(0, 0, 0))
-
-# # If plot is needed plots the progress of iterations
-# if plot is True:
-#     print(iteration_list)
-#     plt.plot(range(len(iteration_list)), iteration_list)
-#     plt.show()
-
-# iteration_list = [start_ratio]
-#         if threeD is True:
-#             inflow_ratio_list = []
-#             for values in inflow_ratio[0]:
-#                 inflow_ratio_value = values
-#                 while abs((inflow_ratio_value - start_ratio)/inflow_ratio_value) > 0.0005:
-#                     start_ratio = inflow_ratio_value
-#                     inflow_ratio_value =  mu_x * np.tan(AoA) + self.C_T / (2*np.sqrt(mu_x**2 + start_ratio**2)) + mu_y
-#             return inflow_ratio_list
-#         #Iterate till error becomes acceptably small
-#         else:
