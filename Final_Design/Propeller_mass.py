@@ -1,0 +1,1 @@
+Total_Propeller_mass = 0
