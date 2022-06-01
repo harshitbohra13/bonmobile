@@ -1,9 +1,9 @@
 print("hello world")
 import numpy as np
 import drag_calc as drag
+import matplotlib.pyplot as plt
 #data
-
-mass = 500 #[kg] #aircraft mass
+mass = 300 #[kg] #aircraft mass
 g = 9.8 
 rho = 1.225
 FOM = 0.75
@@ -18,19 +18,16 @@ t_climb=(450-30.5)/ V_climb #s
 t_descend= t_climb #s
 t_cruise = 20/100 *3600 + 120 #[s] +120 seconds for acceleration and 20 km in one direction 
 t_hover = 60 *2 #[s] hovering appears twice
-
 battery_efficiency = 0.85
-battery_density = 250 #Wh/kg
-# battery_efficiency = 0.9
-# battery_density = 33000 #Wh/kg
+battery_density = 200 #Wh/kg
 
 #---concept 1---
 #rotors data
 blades_number = 3
-rotors_number = 8
+rotors_number = 12
 disk_loading= 500 # [N/m^2]
 #circular beam
-structure_penalty = 1.2 #structure penalty for additional mass with regards to concept 1
+structure_penalty = 1.5 #structure penalty for additional mass with regards to concept 1,
 structure_length = 2
 structure_radius = 0.075
 structure_inner_radius = 0.070
@@ -97,10 +94,10 @@ for i in range(0,5):
     #mass of a battery
     m_battery = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)/(battery_density*3600*battery_efficiency)
 
-    print("motor structure mass",m_motor_structure)
-    print( "rotor mass", m_motor)
-    print( "propeller mass", m_prop)
-    print("battery mass", m_battery)
+    # print("motor structure mass",4*m_motor_structure)
+    # print( "rotor mass", m_motor)
+    # print( "propeller mass", m_prop)
+    # print("battery mass", m_battery)
 
     #list of iterartions for different mass of rotors and propellers
     lst_new_motor = lst_new_motor + [m_motor]
@@ -114,14 +111,32 @@ for i in range(0,5):
         mass = mass + rotors_number*(lst_new_prop[i] + lst_new_motor[i])+4*structure_penalty *lst_m_motor_structure[i] - rotors_number*(lst_new_prop[i-1] + lst_new_motor[i-1])- 4* structure_penalty *lst_m_motor_structure[i-1] + lst_m_battery[i]-lst_m_battery[i-1]
     print("mass", mass)
     propeller_radius = np.sqrt(one_rotor_area/np.pi)
-    CD0 = drag.Cd0_design3(rotors_number, propeller_radius, total_T)
+    CD0 = drag.Cd0_design5(rotors_number, propeller_radius, total_T, structure_Area, S)
     i=i+1
 propeller_radius = np.sqrt(one_rotor_area/np.pi)
 print("propeller radius: ", propeller_radius,"m")
 
 #TOTAL ENERGY:
 Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_cruise + P_descend * t_descend)
-print("Concept 3 Total Energy per mission:",Total_Energy/1000, "KJ" )
+print("Concept 5 Total Energy per mission:",Total_Energy/1000, "KJ" )    
 
+# print()
+# print()
+# print()
+# print("Concept 5 Total Energy per mission:",Total_Energy/10**6, "MJ" )
+# print("Number of rotors:", " 12 rotors with vertical thrust")
+# print("------------")
+# print("Mass of each vertical thrust rotor", m_motor)
+# print( "propeller mass for vertical thrust rotor", m_prop)
+# print("propeller radius vertical thrust: ", propeller_radius,"m")
+# print("------------")
+# print("motor structure mass",4*m_motor_structure)
+# print("battery mass", m_battery)
+# print("Total mass", mass)
 
-#
+# print("------------")
+# print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
+# print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
+# print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
+# print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")
+# print("------------")

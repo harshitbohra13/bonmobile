@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
-g = 9.80665         # gravitation acceleration [m/s^2]
+g = 9.80665         # gravitational acceleration
 K2 = 0.425895581    # a derived constant [s^3/m^3]
 rho_sea = 1.225     # air density at sea-level [kg/m^3]
 rho_cr = 1.17315    # air density at cruise altitude [kg/m^3]
