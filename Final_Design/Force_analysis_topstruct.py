@@ -31,5 +31,6 @@ class DPTrusses:                # 👋
         F_de = -Fa_h*np.sin(theta_b)
         return Fa, F_cf, F_de
 
-
+    def BCD_triangle_legs(self, Fa):
+        
 # Truss_A = DPTrusses(xloc, yloc)
