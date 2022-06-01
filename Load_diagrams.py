@@ -18,15 +18,18 @@ class LoadDiagrams():
         self.v_h = np.sqrt(self.disk_loading/(2*self.rho))
         self.C_T = self.disk_loading/(self.rho*self.omega**2*self.R_rotor**2)
         self.V_C = 100/3.6
+        self.P_h = 2*self.rho*self.A_T*self.v_h**3
 
         self.Cdo = 0.86
         self.S = 100
+
 
     def print_rotor_data(self):
         print(f'Area rotor = {self.A_rotor}')
         print(f'Rotor diameter= {2*self.R_rotor}')
         print(f'Hover inflow speed= {self.v_h}')
         print(f'Thrust coefficient= {self.C_T}')
+
 
     def get_advance_ratio(self, V_c, AoA):
 
@@ -53,22 +56,46 @@ class LoadDiagrams():
 
     def plot_inflow_speed(self):
         hover_inflow = np.sqrt(self.C_T/2)
-        speed_range = np.arange(0, 50, 1)
-        mu_x_lambda_h = [self.get_advance_ratio(i, self.AoA)[0]/hover_inflow for i in speed_range]
-        print(mu_x_lambda_h)
-        lambda_lambda_h = [self.get_inflow_ratio(i, self.AoA)/hover_inflow for i in speed_range]
-        print(lambda_lambda_h)
-        plt.plot(mu_x_lambda_h, lambda_lambda_h)
+        speed_range = np.arange(0, 36, 1)
+
+        alpha_list = np.array([-2, 0, 2, 4, 6, 8, 10])*np.pi/180
+
+        for aoa in alpha_list:
+            mu_x_lambda_h = [self.get_advance_ratio(i, aoa)[0]/hover_inflow for i in speed_range]
+            lambda_lambda_h = [self.get_inflow_ratio(i, aoa)/hover_inflow for i in speed_range]
+            plt.plot(mu_x_lambda_h, lambda_lambda_h, label = f'\u03B1 = {aoa*180/np.pi}\u00b0')
+
+        plt.xlabel('$\u03BB/\u03BB_{h}$')
+        plt.ylabel('\u03BC/\u03BB_{h}')
+        plt.legend()
         plt.show()
 
-    def get_v_i(self, V_c, AoA):
-        v_i = (self.get_inflow_ratio(V_c, AoA) * self.omega * self.R_rotor) - (V_c * np.sin(AoA))
-        return v_i
+
+    def get_v_inflow(self, V_c, AoA):
+        v_inflow = self.get_inflow_ratio(V_c, AoA) * self.omega * self.R_rotor
+        return v_inflow
+
+    def get_v_induced(self, V_c, AoA):
+        v_induced= self.get_inflow_ratio(V_c, AoA) * self.omega * self.R_rotor - V_c*np.sin(AoA)
+        return v_induced
 
     def get_thrust(self, V_c, V_v):
-        v_i = self.get_v_i(V_c, self.AoA)
-        T = 2*self.rho*self.A_T * (v_i + V_v) * np.sqrt(V_c**2 + (V_c*np.sin(self.AoA) +v_i)**2)
+        T = 2*self.rho*self.A_T * (self.get_v_induced(V_c, self.AoA) + V_v) * np.sqrt(V_c**2 + (self.get_v_inflow(V_c, self.AoA))**2)
         return T
+
+    def plot_power_curves(self):
+        speed_range = np.arange(0, 36, 1)
+
+        alpha_list = np.array([-2, 0, 2, 4, 6, 8, 10])*np.pi/180
+
+        for aoa in alpha_list:
+            P = [self.get_v_inflow(i, aoa)*self.get_thrust(i, 0)/12 for i in speed_range]
+            plt.plot(speed_range, P, label = f'\u03B1 = {aoa*180/np.pi}\u00b0')
+
+        plt.xlabel('$V_c {m/s}}$')
+        plt.ylabel('P (W)')
+        plt.legend()
+        plt.show()
 
     def get_load_factor(self, V_c, V_v):
         return self.get_thrust(V_c, V_v) / self.W
@@ -102,7 +129,7 @@ class LoadDiagrams():
 
     def inflow_thrust(self):
         v_c = np.arange(0, 36.4, 0.1)
-        v_i = [self.get_v_i(V_h, self.AoA) for V_h in v_c]
+        v_i = [self.get_v_inflow(V_h, self.AoA) for V_h in v_c]
         inflow_speed = v_i + v_c*np.sin(self.AoA)
         T = [self.get_thrust(V_h, 0) for V_h in v_c]
         plt.plot(inflow_speed, T)
@@ -113,7 +140,7 @@ class LoadDiagrams():
 
     def inflow_aoa(self):
         AoA_range = np.arange(0, 15, 0.1)*np.pi/180
-        v_i = [self.get_v_i(self.V_C, AoA)for AoA in AoA_range]
+        v_i = [self.get_v_inflow(self.V_C, AoA)for AoA in AoA_range]
         plt.plot(np.arange(0, 15, 0.1), v_i)
         plt.xlabel('\u03B1 (\u03B1)')
         plt.ylabel('$V_{inflow} (m/s)$')
@@ -121,8 +148,8 @@ class LoadDiagrams():
         plt.show()
 
     def inflow_cruise(self):
-        V_c_range = np.arange(0, 200, 0.1)
-        v_i = [self.get_v_i(V_c, self.AoA)for V_c in V_c_range]
+        V_c_range = np.arange(0, 36, 0.1)
+        v_i = [self.get_v_inflow(V_c, self.AoA)for V_c in V_c_range]
         plt.plot(V_c_range, v_i)
         plt.xlabel('$V_{c} (m/s)$')
         plt.ylabel('$V_{inflow} (m/s)$')
@@ -132,18 +159,24 @@ class LoadDiagrams():
     def program_input(self):
         print('For input:')
         print(f'Disk Loading = {self.disk_loading} (N/m^2)')
-        print(f'Weight = {self.W} kg')
+        print(f'Weight = {self.W} N')
         print(f'rpm = {self.omega/0.1047198}')
         print(f'AoA = {self.AoA*180/np.pi} deg\n')
         print(f'The inputs to the program are:')
         print(f'Rotor diameter = {self.R_rotor*2} (m)')
-        print(f'Inflow velocity = {self.get_v_i(self.V_C, self.AoA)} (m/s)')
+        print(f'Inflow velocity = {self.get_v_inflow(self.V_C, self.AoA)} (m/s)')
         print(f'Thrust single engine = {self.get_thrust(self.V_C, 0)/12} (N)')
 
 
 
 
 # Input: Disk Loading (N/m^2), Weight (kg), rpm, AoA (deg)
-diagram = LoadDiagrams(500, 540, 8000, 10)
+diagram = LoadDiagrams(500, 1000, 4000, 10)
+print(diagram.P_h)
 diagram.program_input()
+
+diagram.plot_power_curves()
+
+# diagram.loads_verticlimb()
+# diagram.program_input()
 
