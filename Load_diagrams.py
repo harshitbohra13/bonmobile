@@ -144,6 +144,6 @@ class LoadDiagrams():
 
 
 # Input: Disk Loading (N/m^2), Weight (kg), rpm, AoA (deg)
-diagram = LoadDiagrams(500, 540, 8000, 10)
+diagram = LoadDiagrams(500, 1000, 6500, 0)
 diagram.program_input()
 
