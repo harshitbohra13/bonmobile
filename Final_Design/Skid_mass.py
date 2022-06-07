@@ -26,8 +26,11 @@ ski_thickness = 0
 
 #-------------material----------------
 #rod
-mat_dens_rod = 0
-mat_strength_rod = 0
+mat_dens_rod = 2710 #kg/m^3
+mat_strength_rod = 276 #MPa
+mat_E_modulus = 72.4 #GPa
+mat_G_modulus = 24 #GPa
+
 #ski
 mat_dens_ski= 0
 mat_strength_ski = 0
