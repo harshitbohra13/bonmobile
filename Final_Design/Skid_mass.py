@@ -3,8 +3,8 @@ import numpy as np
 
 #---------------dimensions-----------------
 #configuration/ rod geometry
-h = 0 # vertical height of the rod
-x = 0 # horizontal distance of the rod end to fuselage
+h = 1 #m # vertical height of the rod
+x = 0.5 #m # horizontal distance of the rod end to fuselage
 r_out_rod = 0.05
 r_in_rod = 0.03
 #ski
@@ -50,8 +50,8 @@ ski_mass = 2 * ski_width * ski_length * ski_thickness * mat_dens_ski
 skid_mass = rod_mass+ski_mass
 
 #-----------forces and moments at the root --------------
-F_x_end = 0
-F_z_end = 0
+F_x_end = 19000 #N
+F_z_end = 22000 #N
 M_x_root = F_z_end * x
 M_y_root = F_x_end * h
 M_z_root = F_x_end * x
