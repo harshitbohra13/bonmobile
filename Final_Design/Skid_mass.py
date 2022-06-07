@@ -1,12 +1,13 @@
 import numpy as np
 # The design is based on the 3D diagam and hollow cylinders as rods
 
-#------- INPUT BY USER -------
+#------- INPUT BY USER // test parameters -------
 #configuration/ rod geometry
 h = 0 # vertical height of the rod [m]
 w = 0 # width rod [m]
 r_in_rod = 0.03 # inner diamater rod [m]
-
+F_x_rod = 1000 #[N]
+F_
 #---------------dimensions-----------------
 #configuration/ rod geometry
 # h = h # vertical height of the rod [m]
