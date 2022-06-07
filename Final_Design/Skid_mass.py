@@ -1,12 +1,23 @@
 import numpy as np
 # The design is based on the 3D diagam and hollow cylinders as rods
 
+#------- INPUT BY USER -------
+#configuration/ rod geometry
+h = 0 # vertical height of the rod [m]
+w = 0 # width rod [m]
+r_in_rod = 0.03 # inner diamater rod [m]
+
 #---------------dimensions-----------------
 #configuration/ rod geometry
-h = 0 # vertical height of the rod
-x = 0 # horizontal distance of the rod end to fuselage
-r_out_rod = 0.05
-r_in_rod = 0.03
+# h = h # vertical height of the rod [m]
+#w = w # width rod [m]
+
+l = np.sqrt(h*h + w*w) # length rod
+alpha = np.arctan(w/h) # angle rod
+
+r_out_rod = r_in_rod + t # outer diameter rod [m]
+#r_in_rod = 0.03 # inner diamater rod [m]
+
 #ski
 ski_width = 0
 ski_length = 0
@@ -49,33 +60,25 @@ skid_mass = rod_mass+ski_mass
 #-----------forces and moments at the root --------------
 F_x_end = 0
 F_z_end = 0
-M_x_root = F_z_end * x
-M_y_root = F_x_end * h
-M_z_root = F_x_end * x
+mass_rod = mat_dens_rod * np.pi * (r_out_rod**2 - r_in_rod**2) * h/cos(alpha)   #mass rod
+W_rod = mass_rod * 9.81 # weight rod
 
-M_z_1 = M_z * sin(alpha)
-M_z_2 = M_z * cos(alpha)
-M_y_1 = M_y * cos(alpha)
-M_y_2 = M_y * sin(alpha)
+R_x = F_x_end
+R_y = 0
+R_z = W_rod - F_z_end
+M_x = W_rod * 0.5 * w - F_z_end * w
+M_y = -F_x_end * h
+M_z = -F_x_end * w
 
 #----------stresses in cross-section ----------
 
-#sigma_normal = F_z_end / (np.pi * t**2 + 2 * t * r_in_rod)
-#sigma_shear = F_x_end * (t + r_in_rod) * 0.5 * np.pi * (t**2 + 2 * t * r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3) * t)
-#sigma_torsion = T * (t + r_in_rod) / ( np.pi/2 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
-#sigma_bending = moment * (t + r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
+sigma_normal = R_z / (np.pi * t**2 + 2 * t * r_in_rod)
+sigma_shear = R_x * (t + r_in_rod) * 0.5 * np.pi * (t**2 + 2 * t * r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3) * t)
+sigma_torsion = M_z * (t + r_in_rod) / ( np.pi/2 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
+sigma_bending = (M_x + M_y) * (t + r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
 
-def sigma_normal(t):
-    return F_z_end / (np.pi * t**2 + 2 * t * r_in_rod)
 
-def sigma_shear(t):
-    return F_x_end * (t + r_in_rod) * 0.5 * np.pi * (t**2 + 2 * t * r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3) * t)
 
-def sigma_torsion(t):
-    return T * (t + r_in_rod) / ( np.pi/2 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
-
-def sigma_bending(t):
-    return moment * (t + r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
 
 
 
