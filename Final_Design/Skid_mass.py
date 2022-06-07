@@ -11,7 +11,8 @@ r_in_rod = 0.03
 ski_width = 0
 ski_length = 0
 ski_thickness = 0
-
+d_inner = 0
+d_outer = 0
 
 #-------------material----------------
 #rod
@@ -40,6 +41,8 @@ if stress_rod > mat_strength_rod / safety_factor:
 else:
     i = False
 
+#Moment of intertia cross-section
+I_yy = math.pi/64* (d_outer^4-d_inner^4) 
 #----------------calculating mass-------------------------
 rod_mass = 4 * Area_skid_rod * np.sqrt(h**2+x**2) * mat_dens_rod
 ski_mass = 2 * ski_width * ski_length * ski_thickness * mat_dens_ski
