@@ -81,3 +81,5 @@ def sigma_bending(t):
 
 
 
+
+
