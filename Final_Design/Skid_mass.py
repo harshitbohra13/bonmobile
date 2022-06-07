@@ -13,7 +13,7 @@ ski_length = 0
 ski_thickness = 0
 d_inner = 0
 d_outer = 0
-
+alpha = 0
 #-------------material----------------
 #rod
 mat_dens_rod = 0
@@ -48,3 +48,17 @@ rod_mass = 4 * Area_skid_rod * np.sqrt(h**2+x**2) * mat_dens_rod
 ski_mass = 2 * ski_width * ski_length * ski_thickness * mat_dens_ski
 
 skid_mass = rod_mass+ski_mass
+
+#forces and moments at the root
+
+F_x_end = 0
+F_z_end = 0
+M_x_root = F_z_end * x
+M_y_root = F_x_end * h
+M_z_root = F_x_end * x
+
+M_z_1 = M_z_root * sin(alpha)
+M_z_2 = M_z_root * cos(alpha)
+M_y_1 = M_y_root * cos(alpha)
+M_y_2 = M_y_root * sin(alpha)
+
