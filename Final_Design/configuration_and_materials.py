@@ -17,8 +17,10 @@ class configure:
     fuselage_rotor_clearance = 0 #assumption
     rotor_to_rotor_clearance = 0 #assumption
     safety_factor = 1.5
-    r_outer = 0
-    rotor_radius = 0
+    r_outer = 0.1
+    rotor_radius = 1.3/2
+    fuselage_width = 1.19
+    T_max = 12800
 
 
     #Structures data
@@ -64,4 +66,4 @@ class materials:
 This is an example of how to initialize a material. 
 You can always add more material properties and they need not be initialized for all the materials
 """""
-Aluminiumbadboy = materials("Aluminium", E = 201301, Density = 2700, y_strength = 76) 
+Aluminiumbadboy = materials("Aluminium", E = 201301, Density = 2700, y_strength_mat = 76)
