@@ -7,7 +7,7 @@ h = 0 # vertical height of the rod [m]
 w = 0 # width rod [m]
 r_in_rod = 0.03 # inner diamater rod [m]
 F_x_rod = 1000 #[N]
-F_
+F_z_rod = 10000 #[N]
 #---------------dimensions-----------------
 #configuration/ rod geometry
 # h = h # vertical height of the rod [m]
@@ -29,6 +29,7 @@ ski_thickness = 0
 #rod
 mat_dens_rod = 2710 #kg/m^3
 mat_strength_rod = 276 #MPa
+mat_yield_rod = 276 #MPa
 mat_E_modulus = 72.4 #GPa
 mat_G_modulus = 24 #GPa
 
@@ -75,18 +76,18 @@ M_y = -F_x_end * h
 M_z = -F_x_end * w
 
 #----------stresses in cross-section ----------
+t = 0
+while t < r_in_rod:
+    sigma_normal = R_z / (np.pi * t**2 + 2 * t * r_in_rod)
+    sigma_shear = R_x * (t + r_in_rod) * 0.5 * np.pi * (t**2 + 2 * t * r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3) * t)
+    sigma_torsion = M_z * (t + r_in_rod) / ( np.pi/2 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
+    sigma_bending = (M_x + M_y) * (t + r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
 
-sigma_normal = R_z / (np.pi * t**2 + 2 * t * r_in_rod)
-sigma_shear = R_x * (t + r_in_rod) * 0.5 * np.pi * (t**2 + 2 * t * r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3) * t)
-sigma_torsion = M_z * (t + r_in_rod) / ( np.pi/2 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
-sigma_bending = (M_x + M_y) * (t + r_in_rod) / (np.pi/4 * (t**4 + 4 * t**3 * r_in_rod + 6*t**2 * r_in_rod**2 + 4*t*r_in_rod**3))
+    stresses  = sigma_normal + sigma_shear + sigma_torsion + sigma_bending
+    max_stress = mat_yield_rod *100000 #[Pa]
 
+    if stresses > max_stress:
+        print("thickness rod is", t, ", and total stress in cross section is", stresses, "Pa")
+        break
 
-
-
-
-
-
-
-
-
+    t = t+0.001
