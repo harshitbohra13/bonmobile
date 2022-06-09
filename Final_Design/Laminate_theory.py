@@ -4,7 +4,7 @@ from composites import laminated_plate
 import numpy as np
 
 #material characteristics
-E_11 = 255# E modlus along fibres
+E_11 = 255# E modlus along fibres 
 E_22 = 3# E modulus 
 v_12 = 0.15# poisson ratio 12, actually this difference is important v_lt vs v_tl, THIS IS MAJOR POISSON'S RATIO ALONG FIBER'S DIRECTION
 v_21 = 0.15# poisson ratio 21
@@ -35,16 +35,17 @@ strain_rotation_matrix = np.array([[T_11,T_12,T_13], [T_21,T_22,T_23], [T_31,T_3
 
 
 laminaprop = (E_11, E_22, v_12 , G_12, G_13, G_23) #?
-plyt = 0.1 #thickness of one layer ?
-stack = [0, 90, 90, 0 ] #?
+plyt = 0.15 #thickness of one layer 
+stack = [0,45,45,0] #?
+# stack = [0, 90,0,90] #?
 plate = laminated_plate(stack, plyt=plyt, laminaprop=laminaprop)
-# print(plate.ABD)
+print(plate.ABD)
 
 
 LOADS = np.array([[1],[1],[1],[0],[0],[0]]) #?
 # print(LOADS)
 strains  = np.dot(np.linalg.inv(plate.ABD), LOADS)
-print(strains)
+# print(strains)
 
 #-----------Calculate strains for every layer! Consider only EVEN layers!--------
 lamina_strains_in_xy = stack
@@ -52,10 +53,10 @@ for i in range(0,len(stack)):
     #creating list of lists with x,y,xy strains for each layer
     lamina_strains_in_xy[i] = [strains[0,0]+strains[3,0]*(plyt*(len(stack)/2-i)-plyt/2),strains[1,0]+strains[4,0]*(plyt*(len(stack)/2-i)-plyt/2), strains[2,0]+strains[5,0]*(plyt*(len(stack)/2-i)-plyt/2)]
 
-print(lamina_strains_in_xy)
+# print(lamina_strains_in_xy)
 
 #making ana array out of the strain list
 lamina_strains_in_xy_array = np.asarray(lamina_strains_in_xy)
-print(lamina_strains_in_xy_array)
+# print(lamina_strains_in_xy_array)
 
 
