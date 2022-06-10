@@ -3,28 +3,43 @@ import matplotlib.pyplot as plt
 
 class LoadDiagrams():
 
-    def __init__(self, disk_loading, W, omega):
+    def __init__(self, R, W, omega, P_a):
         self.rho = 1.225
-        self.disk_loading = disk_loading
+        self.R_rotor = R
         self.n_rotors = 12
         self.W = W*9.81
 
-        self.A_T = self.W / self.disk_loading
-        self.A_rotor = self.A_T/self.n_rotors
-        self.R_rotor = np.sqrt(self.A_rotor/np.pi)
+        self.A_rotor = self.R_rotor**2 * np.pi
+        self.A_T = self.A_rotor * 12
+        self.disk_loading = self.W/self.A_T
 
         self.omega = omega*0.1047198
         self.v_h = np.sqrt(self.disk_loading/(2*self.rho))
         self.C_T = self.disk_loading/(self.rho*self.omega**2*self.R_rotor**2)
         self.V_C = 100/3.6
         self.P_h = 2*self.rho*self.A_T*self.v_h**3
+        self.k = 1.15
+        self.P_a = P_a
+        self.FM = 0.7
+
+    def get_drag(self, V):
+        D_c = 350
+        F = D_c / (0.5 * self.rho * self.V_C ** 2)
+        D = F * 0.5 * self.rho * V ** 2
+        return D
+
+    def get_drag_horizontal(self, V_h):
+        D_h = 60
+        F = D_h / (0.5 * self.rho * 6 ** 2)
+        D = F * 0.5 * self.rho * V_h ** 2
+        return D
 
     def get_aoa(self, V):
-        D_c = 1000
-        F = D_c/(0.5*self.rho*self.V_C**2)
-        D  = F*0.5*self.rho*V**2
-        aoa = np.tanh(D/self.W)
+        aoa = np.tanh(self.get_drag(V)/self.W)
         return aoa
+
+    def get_parasitic_power(self, V):
+        return self.get_drag(V)*V / self.FM
 
     def plot_aoa(self):
         V = np.arange(0, 100, 0.1)
@@ -41,10 +56,7 @@ class LoadDiagrams():
         #Advance ratio in x-direction
         mu_x = V*np.cos(AoA)/(self.omega*self.R_rotor)
 
-        #Advance ratio in y-direction
-        mu_y = V*np.sin(AoA)/(self.omega*self.R_rotor)
-
-        return mu_x, mu_y
+        return mu_x
 
     def get_inflow_ratio(self, V, aoa=True):
         if aoa is True:
@@ -53,7 +65,7 @@ class LoadDiagrams():
             AoA = aoa
 
        #Get advance ratio in x and y direction
-        mu_x, mu_y = self.get_advance_ratio(V)
+        mu_x = self.get_advance_ratio(V)
 
         #Set start inflow ratio to hover inflow ratio, then predict first inflow ration
         start_ratio = np.sqrt(self.C_T/2)
@@ -129,39 +141,113 @@ class LoadDiagrams():
         plt.legend()
         plt.show()
 
+    def get_profile_power(self, V):
+        mu = self.get_advance_ratio(V)
+        K = 4.65
+        Cd0 = 0.0085
+        sigma = 0.1
+        cp = (1+K*mu**2)*sigma*Cd0/8
+        P = cp*self.A_T* (self.omega*self.R_rotor) ** 3
+        return P / self.FM
+
     def get_power(self, V):
-        return self.get_v_inflow(V)*self.get_thrust(V, 0)
+        P_i = self.get_v_inflow(V)*self.get_thrust(V, 0) / self.FM
+        P_p = self.get_parasitic_power(V) / self.FM
+        P_profile = self.get_profile_power(V)
+        return P_i + P_p + P_profile
 
-    def plot_power(self):
-        V = np.arange(0, 60, 0.1)
-        P = [self.get_v_inflow(i)*self.get_thrust(i, 0) for i in V]
-        P_i = [self.get_v_induced(i)*self.get_thrust(i, 0) for i in V]
-        P_p = [self.get_advance_ratio(i)[0]*self.omega*self.R_rotor*np.tan(self.get_aoa(i))*self.get_thrust(i, 0) for i in V]
 
-        plt.plot(V, P, label='Total Power')
-        plt.plot(V, P_i, label='Induced Power')
-        plt.plot(V, P_p, label='Parasite Power')
-        plt.xlabel('$V_c {m/s}}$')
-        plt.ylabel('P (W)')
+    def plot_power_actual(self):
+        V = np.arange(0, 200/3.6, 0.01)
+        P = [self.get_power(i)/12000 for i in V]
+        P_i = [self.get_v_induced(i)*self.get_thrust(i, 0)/12000 for i in V]
+        P_p = [self.get_advance_ratio(i)*self.omega*self.R_rotor*np.tan(self.get_aoa(i))*self.get_thrust(i, 0)/12000 for i in V]
+        P_d = [self.get_parasitic_power(i)/12000 for i in V]
+        P_prof = [self.get_profile_power(i)/12000 for i in V]
+        P_a = np.ones(len(V))*self.P_a
+
+        plt.plot(V*3.6, P_a, label='Available power', c='black', linestyle='--')
+        plt.plot(V*3.6, P, label='Total power required ', c='black')
+        plt.plot(V*3.6, P_i, label='Induced Power')
+        plt.plot(V*3.6, P_p, label='Propulsive Power')
+        plt.plot(V*3.6, P_d, label='Parasitic Power')
+        plt.plot(V*3.6, P_prof, label='Profile Power')
+        plt.xlabel('$V_\infty (km/h)$')
+        plt.ylabel('P (kW)')
         plt.legend()
         plt.show()
 
+
+    def performance(self):
+        V = np.arange(0, 200/3.6, 0.1)
+        P = np.array([self.get_power(i)/12000 for i in V])
+        P_a = np.ones(len(V)) * self.P_a
+
+        P_end = np.arange(0, min(P), 0.1)
+        V_end = np.ones(len(P_end))*V[np.where(P==min(P))]
+
+        slope_list = P/V
+        slope = min(P/V)
+        P_ran = np.arange(0, P[np.where(slope_list==slope)], 0.1)
+        V_ran = np.ones(len(P_ran))*V[np.where(slope_list==slope)]
+        range = slope*V
+
+        index = 0
+        for i, value in enumerate(P):
+            if value > P_a[0]:
+                index = i
+                break
+
+        P_max = np.arange(0, P_a[index], 0.1)
+        V_max = np.ones(len(P_max))*V[index]
+
+        plt.plot(V * 3.6, P_a, label='Available Power', c='black', linestyle='--')
+        plt.plot(V * 3.6, P, label='Total Power Required', c='black')
+
+        plt.plot(V_end*3.6, P_end, label=f'V max. endurance = {round(V_end[0]*3.6)} (km/h)')
+        plt.plot(V_ran*3.6, P_ran, label=f'V max. range = {round(V_ran[0]*3.6)} (km/h)', c='orange')
+        plt.plot(V_max*3.6, P_max, label=f'max. V attainable = {round(V_max[0]*3.6)} (km/h)', c='green')
+        plt.plot(V * 3.6, range, linestyle=':', c='orange')
+
+        plt.legend()
+        plt.show()
+
+
+    def plot_climb_performance(self):
+        V = np.arange(0, 200/3.6, 0.1)
+        V_c = [(15000*12-self.get_power(i)*self.k)/self.W for i in V]
+        plt.plot(V*3.6, V_c)
+        plt.show()
+
+
     def get_power_climb(self, V_c):
-        return (V_c/self.v_h) +np.sqrt(((V_c/self.v_h )**2)+1) * self.P_h
+        P_c = ((V_c/(self.v_h*2)) + np.sqrt((V_c/(self.v_h*2))**2+1)) * self.P_h
+        P_p = self.get_profile_power(0)
+        P_d = V_c * self.get_drag_horizontal(V_c)
+        return P_c + P_p + P_d
+
+    def get_power_descent(self, V_c):
+        P_d = (-0.125* V_c + 0.974 - 1.372*V_c**2 -1.718*V_c**3 - 0.655*V_c**4)*self.P_h
+        P_p = self.get_profile_power(0)
+        P_drag = V_c * self.get_drag_horizontal(V_c)
+        return P_d + P_p + P_drag
 
     def get_thrust_climb(self, V_c):
         v_i = (-(V_c/(self.v_h*2)) + np.sqrt(((V_c/(self.v_h*2))**2)+1))*self.v_h
-        print(v_i)
         T = 2*self.rho*self.A_T*(V_c+v_i)*v_i
-        return T
+        D = self.get_drag_horizontal(V_c)
+        print(D)
+        return T + D
 
     def get_inflow_climb(self, V_c):
         return (-(V_c/(self.v_h*2)) + np.sqrt(((V_c/(self.v_h*2))**2)+1))*self.v_h + V_c
 
     def plot_power_climb(self):
-        V_c = np.arange(0, 50, 0.1)
-        P = [self.get_power_climb(i) for i in V_c]
+        V_c = np.arange(0, 10, 0.1)
+        P = [self.get_power_climb(i) / 12000 for i in V_c]
         plt.plot(V_c, P)
+        plt.xlabel('$V_{C}$ (m/s)')
+        plt.ylabel('P (kW)')
         plt.show()
 
     def plot_thrust_climb(self):
@@ -169,6 +255,24 @@ class LoadDiagrams():
         T = [self.get_thrust_climb(i) for i in V_c]
         plt.plot(V_c, T)
         plt.show()
+
+    def plot_climb_descent(self):
+        V_c = np.arange(0, 10, 0.1)
+        V_d = np.arange(-20, 0, 0.1) / self.v_h
+        V_t = np.arange(-20, 20, 0.1)
+
+        P_c = [self.get_power_climb(i) / 12000 for i in V_c]
+        P_d = [self.get_power_descent(i)  / 12000 for i in V_d]
+        P_a = np.ones(len(V_t))*self.P_a
+
+        plt.plot(V_c, P_c, label='Normal working state')
+        plt.plot(V_d*self.v_h, P_d, label='Vortex ring state')
+        plt.plot(V_t, P_a, label='Power available', linestyle='--', c='black')
+        plt.xlabel('$V_{c}$ and $V_{d}$')
+        plt.ylabel('P (kW)')
+        plt.legend()
+        plt.show()
+
 
     def loads_cruise(self):
         V = np.arange(0, 100, 0.1)
@@ -186,44 +290,6 @@ class LoadDiagrams():
         plt.plot(x, y)
         plt.xlabel('$V_{v} (m/s)$')
         plt.ylabel('n')
-        plt.legend()
-        plt.show()
-
-    def loads_vertidescent(self):
-        x = np.arange(0, -10, 0.1)
-        y = [self.get_load_factor(0, V_v) for V_v in x]
-        plt.plot(x, y)
-        plt.xlabel('$V_{v} (m/s)$')
-        plt.ylabel('n')
-        plt.legend()
-        plt.show()
-
-    def inflow_thrust(self):
-        v_c = np.arange(0, 36.4, 0.1)
-        v_i = [self.get_v_inflow(V_h, self.AoA) for V_h in v_c]
-        inflow_speed = v_i + v_c*np.sin(self.AoA)
-        T = [self.get_thrust(V_h, 0) for V_h in v_c]
-        plt.plot(inflow_speed, T)
-        plt.xlabel('$V_{inflow} (m/s)$')
-        plt.ylabel('T')
-        plt.legend()
-        plt.show()
-
-    def inflow_aoa(self):
-        AoA_range = np.arange(0, 15, 0.1)*np.pi/180
-        v_i = [self.get_v_inflow(self.V_C, AoA)for AoA in AoA_range]
-        plt.plot(np.arange(0, 15, 0.1), v_i)
-        plt.xlabel('\u03B1 (\u03B1)')
-        plt.ylabel('$V_{inflow} (m/s)$')
-        plt.legend()
-        plt.show()
-
-    def inflow_cruise(self):
-        V_c_range = np.arange(0, 36, 0.1)
-        v_i = [self.get_v_inflow(V_c, self.AoA)for V_c in V_c_range]
-        plt.plot(V_c_range, v_i)
-        plt.xlabel('$V_{c} (m/s)$')
-        plt.ylabel('$V_{inflow} (m/s)$')
         plt.legend()
         plt.show()
 
@@ -247,9 +313,20 @@ class LoadDiagrams():
 
 
 
-# Input: Disk Loading (N/m^2), Weight (kg), rpm, AoA (deg)
-diagram = LoadDiagrams(440, 1000, 1000)
-diagram.program_input(100/36, 0)
+# Input: Radius (m), Weight (kg), rpm, P_a
+diagram = LoadDiagrams(0.9, 1256.8, 2011.5, 26.163)
+
+diagram.program_input(0, 6)
+
+#print(diagram.get_power_climb(0))
+#print(diagram.get_power(0))
+diagram.plot_power_actual()
+#diagram.plot_climb_descent()
+#diagram.plot_climb_performance()
+diagram.performance()
+
+
+
 
 
 
