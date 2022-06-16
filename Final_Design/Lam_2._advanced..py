@@ -15,7 +15,7 @@ G_13 = 2 #Shear modulus?
 G_23 = 2 #Shear modulus?
 
 #criteria for failure in stress
-max_stress_along_fibres = 1490
+max_stress_along_fibres = 1479
 max_stress_tran_to_fibres = 80
 max_shear_stress = 70
 

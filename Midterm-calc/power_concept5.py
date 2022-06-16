@@ -135,7 +135,7 @@ Total_Energy = rotors_number*2*(P_hover*t_hover +  P_climb*t_climb + P_cruise*t_
 print("Total mass", mass)
 
 # print("------------")
-# print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
+print("P_hover per 1 rotor vertical thrust", P_hover/1000, "kW")
 # print("P_climb per 1 rotor vertical thrust", P_climb/1000, "kW")
 # print("P_descend per 1 rotor vertical thrust", P_descend/1000, "kW")
 # print("P_cruise per 1 rotor vertical thrust", P_cruise/1000, "kW")

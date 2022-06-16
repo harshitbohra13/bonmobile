@@ -1,7 +1,19 @@
 import numpy as np
-Force_Z = 7185 #N
+Force_Z = 7185 #N 7185 
 Moment_y = 62.416 #62.416 
 Moment_x = 1191.466 #1191.466
+
+#iteration 0 
+Force_Z = 7263 #N
+Moment_y = 28.238 #62.416 
+Moment_x = 1235.8 #1191.466
+
+# #iteration 1
+# Force_Z = 8729 #N
+# Moment_y = 33.9 #62.416 
+# Moment_x = 1485.4 #1191.466
+
+
 Density  = 2770
 yielding_strength = 469 #Mpa
 safety_factor = 1.5
@@ -12,6 +24,7 @@ T_f = 3 #mm
 H = 50 #mm
 T_w = 3 #mm
 
+#89%
 
 
 #Centeroid zero at T_W level where H starts
@@ -55,6 +68,10 @@ Circ2 = np.pi*(2.550/2+1.900/2)
 Circ3 = np.pi*(2.550/2+1.900/2)
 Circ4 = np.pi*(2.410/2+1.800/2)
 
+print("Circ_1:",Circ1)
+print("Circ_2:",Circ2)
+print("Circ_3:",Circ3)
+print("Circ_4:",Circ4)
 Total_Volume = (Circ1+Circ2+Circ3+Circ4)*(A_1+A_2)/10**6
 print("per:",Circ1+Circ2+Circ3+Circ4)
 ribs_mass = Total_Volume * Density

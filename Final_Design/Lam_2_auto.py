@@ -10,12 +10,12 @@ import numpy as np
 # E_22 = 8.37# E modulus 
 # v_12 = 0.3# poisson ratio 12, actually this difference is important v_lt vs v_tl, THIS IS MAJOR POISSON'S RATIO ALONG FIBER'S DIRECTION
 # v_21 = v_12*E_22/E_11# poisson ratio 21
-# G_12 = 5.17 #Shear modulus
+# G_12 = 5 #Shear modulus
 # G_13 = 5.17  #Shear modulus, this does not affect plate
 # G_23 = 5.17  #Shear modulus, this does not affect plate
 
-# max_stress_along_fibres = 1490
-# max_stress_tran_to_fibres = 80
+# max_stress_along_fibres = 1479
+# max_stress_tran_to_fibres = 50
 # max_shear_stress = 70
 # ##stack configuration
 # a = 1
@@ -23,9 +23,11 @@ import numpy as np
 # stack_b = [22.5,67.5,112.5,157.5]
 # stack_a = [90,0,45,-45]
 # stack_b = [-45,45,0,90]
+# stack_a = [90,0]
+# stack_b = [0,90]
 
 
-# # WEAVE CARBON FIBRE / VITRIMER
+# WEAVE CARBON FIBRE / VITRIMER
 E_11 = 74.27# E modlus along fibres 
 E_22 = 74.27# E modulus 
 v_12 = 0.1# poisson ratio 12, actually this difference is important v_lt vs v_tl, THIS IS MAJOR POISSON'S RATIO ALONG FIBER'S DIRECTION
@@ -34,17 +36,42 @@ G_12 = 5 #Shear modulus
 G_13 = 5.17  #Shear modulus, this does not affect plate
 G_23 = 5.17  #Shear modulus, this does not affect plate
 #stack configuration
-a = 2
+a = 1
 # stack_a = [22.5,-22.5]
 # stack_b = [22.5,-22.5]
-# stack_a = [90]
-# stack_b = [90]
-stack_a = [0,45]
-stack_b = [45,0]
+stack_a = [45]
+stack_b = [45]
+# stack_a = [0]
+# stack_b = [0]
+# stack_a = [0,45]
+# stack_b = [45,0]
 
-max_stress_along_fibres = 1490 #1490
-max_stress_tran_to_fibres = 1490 #1490 #80
-max_shear_stress = 70
+max_stress_along_fibres = 1479 #1490
+max_stress_tran_to_fibres = 1479 #1490 #80
+max_shear_stress = 70 #90
+
+# WEAVE FLAX FIBRE/ VITRIMER v,G, max shear assumed.
+# E_11 = 20.68# E modlus along fibres 
+# E_22 = 20.68# E modulus 
+# v_12 = 0.1# poisson ratio 12, actually this difference is important v_lt vs v_tl, THIS IS MAJOR POISSON'S RATIO ALONG FIBER'S DIRECTION
+# v_21 = v_12*E_22/E_11# poisson ratio 21
+# G_12 = 5 #Shear modulus
+# G_13 = 5.17  #Shear modulus, this does not affect plate
+# G_23 = 5.17  #Shear modulus, this does not affect plate
+# #stack configuration
+# a = 1
+# # stack_a = [22.5,-22.5]
+# # stack_b = [22.5,-22.5]
+# stack_a = [45]
+# stack_b = [45]
+# stack_a = [0]
+# stack_b = [0]
+# # stack_a = [0,45]
+# # stack_b = [45,0]
+
+# max_stress_along_fibres = 350 #1490
+# max_stress_tran_to_fibres = 350 #1490 #80
+# max_shear_stress = 70 #90
 
 
 
@@ -95,7 +122,7 @@ plate = laminated_plate(stack, plyt=plyt, laminaprop=laminaprop)
 
 #------------------------------STRESS METHOD--------------------------
 #Defining stresses
-Stress_average = np.array([[0],[540],[0]]) #np.array([[493],[0],[236]])
+Stress_average = np.array([[140],[0],[0]]) #np.array([[493],[0],[236]])
 
 #Defining A matrix
 stiffness_matrix = plate.ABD
@@ -171,7 +198,7 @@ Failure = False
 #Check if any layer fails
 for i in range (0,len(stack)):
     layer = i
-    if  layers_stress[0,i] < max_stress_along_fibres and layers_stress[1,i] < max_stress_tran_to_fibres and layers_stress[2,i] < max_shear_stress:
+    if abs( layers_stress[0,i]) < max_stress_along_fibres and abs(layers_stress[1,i]) < max_stress_tran_to_fibres and abs(layers_stress[2,i]) < max_shear_stress:
         Failure = False
     else:
         Failure = True 

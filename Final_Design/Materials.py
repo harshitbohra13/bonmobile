@@ -14,8 +14,8 @@ Epoxy = {"strength":(36+71)/2 , "E":(2.35+3.08)/2, "density":(1110+1140)/2}
 Fibre_perc_cont = 0.3 # 47% carbon fiber mallinda
 
 #pick fibre and resin
-fibre = carbon_fibre_hexcel
-resin = Vertimer_Mallinda
+fibre = flax_fibre
+resin = Epoxy
 
 
 #Calcualting composite
